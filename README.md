@@ -18,7 +18,6 @@ var webserver = require('gulp-webserver');
 gulp.task('webserver', function() {
   gulp.src('app')
     .pipe(webserver({
-      port: 8000,
       livereload: true
     }));
 });
