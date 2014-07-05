@@ -30,7 +30,7 @@ Key | Type | Default | Description |
 --- | --- | --- | --- |
 `host` | String | `localhost` | hostname of the webserver
 `port` | Number | `8000` | port of the webserver
-`livereload` | Boolean/Number | `false` | whether to use livereload (custom port also possible as value)
+`livereload` | Boolean/Number | `false` | whether to use livereload (custom port also possible as value, default is `35729`)
 `https` | Boolean | `false` | *feature coming soon*
 `fallback` | String | `undefined` | *feature coming soon*
 `middleware` | Array | `[]` | *feature coming soon*
