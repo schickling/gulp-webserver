@@ -3,7 +3,7 @@ gulp-webserver [![Build Status](http://img.shields.io/travis/schickling/gulp-web
 
 > Streaming gulp plugin to run a local webserver with LiveReload
 
-#### Hint: This is a rewrite of [gulp-connect](https://github.com/AveVlad/gulp-connect/)
+##### Hint: This is a rewrite of [gulp-connect](https://github.com/AveVlad/gulp-connect/)
 
 ## Install
 
