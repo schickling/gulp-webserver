@@ -1,9 +1,47 @@
 var through = require('through2');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
+var http = require('http');
+var connect = require('connect');
+var serveStatic = require('serve-static');
+var livereload = require('connect-livereload');
 
-var PLUGIN_NAME = 'gulp-webserver';
+module.exports = function(options) {
 
-function gulpWebserver(options) {}
+  options = options || {};
 
-module.exports = gulpWebserver;
+  var host = options.host || 'localhost';
+  var port = options.port || 8000;
+  var livereloadPort = options.livereload || false;
+
+  if (livereloadPort === true) {
+    livereloadPort = 35729;
+  }
+
+  var webserver = connect();
+
+  if (options.livereload) {
+
+    webserver.use(livereload({
+      port: livereloadPort
+    }));
+
+  }
+
+  var stream = through.obj(function(file, enc, callback) {
+
+    webserver.use(serveStatic(file.path));
+
+    this.push(file);
+
+    callback();
+
+  });
+
+  var server = http.createServer(webserver).listen(port, host);
+
+  stream.on('kill', function() {
+    server.close();
+  });
+
+  return stream;
+
+};
