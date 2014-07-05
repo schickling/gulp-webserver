@@ -6,15 +6,15 @@ describe('gulp-webserver', function() {
 
   var stream;
 
+  var rootDir = new File({
+    path: __dirname + '/fixtures'
+  });
+
   afterEach(function() {
     stream.emit('kill');
   });
 
   it('should work with default options', function(done) {
-
-    var rootDir = new File({
-      path: __dirname + '/fixtures'
-    });
 
     stream = webserver();
 
@@ -32,10 +32,6 @@ describe('gulp-webserver', function() {
 
   it('should work with custom port', function(done) {
 
-    var rootDir = new File({
-      path: __dirname + '/fixtures'
-    });
-
     stream = webserver({
       port: 1111
     });
@@ -51,12 +47,8 @@ describe('gulp-webserver', function() {
       });
 
   });
-  
-  it('should work with custom host', function(done) {
 
-    var rootDir = new File({
-      path: __dirname + '/fixtures'
-    });
+  it('should work with custom host', function(done) {
 
     stream = webserver({
       host: '0.0.0.0'

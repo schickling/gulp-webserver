@@ -36,8 +36,6 @@ module.exports = function(options) {
 
     webserver.use(serveStatic(file.path));
 
-    this.push(file);
-
     if (livereloadPort) {
 
       watch(file.path, function(filename) {
@@ -52,6 +50,8 @@ module.exports = function(options) {
 
     }
 
+    this.push(file);
+
     callback();
 
   });
@@ -59,7 +59,13 @@ module.exports = function(options) {
   var server = http.createServer(webserver).listen(port, host);
 
   stream.on('kill', function() {
+
     server.close();
+
+    if (livereloadPort) {
+      lrServer.close();
+    }
+
   });
 
   return stream;
