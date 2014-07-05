@@ -1,7 +1,7 @@
 gulp-webserver [![Build Status](http://img.shields.io/travis/schickling/gulp-webserver.svg?style=flat)](https://travis-ci.org/schickling/gulp-webserver) [![](http://img.shields.io/npm/dm/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver) [![](http://img.shields.io/npm/v/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver)
 ==============
 
-Streaming gulp plugin to run a local webserver with LiveReload
+> Streaming gulp plugin to run a local webserver with LiveReload
 
 ## Install
 
@@ -37,7 +37,7 @@ Key | Type | Default | Description |
 
 ## FAQ
 
-### I can't reach the server from the network
+### Why can't I reach the server from the network?
 
 **Solution**: Set `0.0.0.0` as `host` option.
 
