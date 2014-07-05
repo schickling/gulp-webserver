@@ -38,11 +38,11 @@ Key | Type | Default | Description |
 
 ## FAQ
 
-### Why can't I reach the server from the network?
+#### Why can't I reach the server from the network?
 
 **Solution**: Set `0.0.0.0` as `host` option.
 
-### How can I use `html5Mode` for my single page app with this plugin?
+#### How can I use `html5Mode` for my single page app with this plugin?
 
 **Solution**: Set the `index.html` of your application as `fallback` option.
 
