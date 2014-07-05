@@ -1,0 +1,25 @@
+{
+  "name": "gulp-webserver",
+  "version": "0.0.0",
+  "description": "Gulp plugin to run a local webserver with LiveReload",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schickling/gulp-webserver.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "webserver",
+    "connect",
+    "livereload"
+  ],
+  "author": "Johannes Schickling <schickling.j@gmail.com> (https://github.com/schickling)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schickling/gulp-webserver/issues"
+  },
+  "homepage": "https://github.com/schickling/gulp-webserver"
+}
