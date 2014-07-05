@@ -2,7 +2,9 @@ var through = require('through2');
 var http = require('http');
 var connect = require('connect');
 var serveStatic = require('serve-static');
-var livereload = require('connect-livereload');
+var connectLivereload = require('connect-livereload');
+var tinyLr = require('tiny-lr');
+var watch = require('node-watch');
 
 module.exports = function(options) {
 
@@ -17,12 +19,16 @@ module.exports = function(options) {
   }
 
   var webserver = connect();
+  var lrServer;
 
-  if (options.livereload) {
+  if (livereloadPort) {
 
-    webserver.use(livereload({
+    webserver.use(connectLivereload({
       port: livereloadPort
     }));
+
+    lrServer = tinyLr();
+    lrServer.listen(livereloadPort);
 
   }
 
@@ -31,6 +37,20 @@ module.exports = function(options) {
     webserver.use(serveStatic(file.path));
 
     this.push(file);
+
+    if (livereloadPort) {
+
+      watch(file.path, function(filename) {
+
+        lrServer.changed({
+          body: {
+            files: filename
+          }
+        });
+
+      });
+
+    }
 
     callback();
 
