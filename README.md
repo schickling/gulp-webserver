@@ -23,3 +23,42 @@ gulp.task('webserver', function() {
     }));
 });
 ```
+
+## Options
+
+Key | Type | Default | Description | 
+--- | --- | --- | --- |
+`host` | String | `localhost` | hostname of the webserver
+`port` | Number | `8000` | port of the webserver
+`livereload` | Boolean/Number | `false` | whether to use livereload (custom port also possible as value)
+`https` | Boolean | `false` | *feature coming soon*
+`fallback` | String | `undefined` | *feature coming soon*
+`middleware` | Array | `[]` | *feature coming soon*
+
+## FAQ
+
+### I can't reach the server from the network
+
+**Solution**: Set `0.0.0.0` as `host` option.
+
+### How can I use `html5Mode` for my single page app with this plugin?
+
+**Solution**: Set the `index.html` of your application as `fallback` option.
+
+## License
+
+[MIT License](http://opensource.org/licenses/MIT)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
