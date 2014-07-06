@@ -5,6 +5,7 @@ var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
 var tinyLr = require('tiny-lr');
 var watch = require('node-watch');
+var fs = require('fs');
 
 module.exports = function(options) {
 
@@ -18,12 +19,14 @@ module.exports = function(options) {
     livereloadPort = 35729;
   }
 
-  var webserver = connect();
+  var fallback = options.fallback;
+
+  var app = connect();
   var lrServer;
 
   if (livereloadPort) {
 
-    webserver.use(connectLivereload({
+    app.use(connectLivereload({
       port: livereloadPort
     }));
 
@@ -34,7 +37,13 @@ module.exports = function(options) {
 
   var stream = through.obj(function(file, enc, callback) {
 
-    webserver.use(serveStatic(file.path));
+    app.use(serveStatic(file.path));
+
+    if (fallback) {
+      app.use(function(req, res) {
+        fs.createReadStream(file.path + '/' + fallback).pipe(res);
+      });
+    }
 
     if (livereloadPort) {
 
@@ -56,11 +65,11 @@ module.exports = function(options) {
 
   });
 
-  var server = http.createServer(webserver).listen(port, host);
+  var webserver = http.createServer(app).listen(port, host);
 
   stream.on('kill', function() {
 
-    server.close();
+    webserver.close();
 
     if (livereloadPort) {
       lrServer.close();

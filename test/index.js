@@ -66,4 +66,22 @@ describe('gulp-webserver', function() {
 
   });
 
+  it('should fall back to default.html', function(done) {
+
+    stream = webserver({
+      fallback: 'default.html'
+    });
+
+    stream.write(rootDir);
+
+    request('http://localhost:8000')
+      .get('/some/random/path/')
+      .expect(200, /Default/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
 });
