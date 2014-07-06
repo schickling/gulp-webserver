@@ -13,6 +13,8 @@ $ npm install --save-dev gulp-webserver
 
 ## Usage
 
+The `gulp.src()` element is the root directory of the webserver. Multiple elements are possible.
+
 ```js
 var gulp = require('gulp');
 var webserver = require('gulp-webserver');
