@@ -40,9 +40,16 @@ module.exports = function(options) {
     app.use(serveStatic(file.path));
 
     if (fallback) {
-      app.use(function(req, res) {
-        fs.createReadStream(file.path + '/' + fallback).pipe(res);
-      });
+
+      var fallbackFile = file.path + '/' + fallback;
+
+      if (fs.existsSync(fallbackFile)) {
+
+        app.use(function(req, res) {
+          fs.createReadStream(fallbackFile).pipe(res);
+        });
+
+      }
     }
 
     if (livereloadPort) {
