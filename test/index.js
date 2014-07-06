@@ -1,6 +1,6 @@
 var request = require('supertest');
 var webserver = require('../src');
-var File = require('vinyl');
+var File = require('gulp-util').File;
 
 describe('gulp-webserver', function() {
 

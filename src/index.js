@@ -1,4 +1,5 @@
 var through = require('through2');
+var gutil = require('gulp-util');
 var http = require('http');
 var connect = require('connect');
 var serveStatic = require('serve-static');
@@ -73,6 +74,8 @@ module.exports = function(options) {
   });
 
   var webserver = http.createServer(app).listen(port, host);
+
+  gutil.log('Webserver started at', gutil.colors.cyan('http://' + host + ':' + port));
 
   stream.on('kill', function() {
 
