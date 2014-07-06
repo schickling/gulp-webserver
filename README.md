@@ -34,8 +34,8 @@ Key | Type | Default | Description |
 `host` | String | `localhost` | hostname of the webserver
 `port` | Number | `8000` | port of the webserver
 `livereload` | Boolean/Number | `false` | whether to use livereload (custom port also possible as value, default is `35729`)
+`fallback` | String | `undefined` | file to fall back to (relative to webserver root)
 `https` | Boolean | `false` | *feature coming soon*
-`fallback` | String | `undefined` | *feature coming soon*
 `middleware` | Array | `[]` | *feature coming soon*
 
 ## FAQ
@@ -46,7 +46,16 @@ Key | Type | Default | Description |
 
 #### How can I use `html5Mode` for my single page app with this plugin?
 
-**Solution**: Set the `index.html` of your application as `fallback` option.
+**Solution**: Set the `index.html` of your application as `fallback` option. For example:
+
+```js
+gulp.task('webserver', function() {
+  gulp.src('app')
+    .pipe(webserver({
+      fallback: 'index.html'
+    }));
+});
+```
 
 ## License
 
