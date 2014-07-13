@@ -45,12 +45,12 @@ describe('gulp-webserver', function () {
 
   it('should work with custom host', function (done) {
     stream = webserver({
-      host: '0.0.0.0'
+      host: '127.0.0.1'
     });
 
     stream.write(rootDir);
 
-    request('http://0.0.0.0:8000')
+    request('http://127.0.0.1:8000')
       .get('/')
       .expect(200, /Hello World/)
       .end(function (err) {
