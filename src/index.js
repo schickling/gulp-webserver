@@ -1,75 +1,53 @@
+var browserSync = require('browser-sync');
 var through = require('through2');
 var gutil = require('gulp-util');
-var http = require('http');
-var connect = require('connect');
-var serveStatic = require('serve-static');
-var connectLivereload = require('connect-livereload');
-var tinyLr = require('tiny-lr');
 var watch = require('node-watch');
 var fs = require('fs');
+var util = require('util');
 
 module.exports = function (options) {
   options = options || {};
-  var host = options.host || 'localhost';
-  var port = options.port || 8000;
-  var livereloadPort = options.livereload || false;
-
-  if (livereloadPort === true) {
-    livereloadPort = 35729;
-  }
 
   var fallback = options.fallback;
 
-  var app = connect();
-  var lrServer;
-
-  if (livereloadPort) {
-    app.use(connectLivereload({
-      port: livereloadPort
-    }));
-
-    lrServer = tinyLr();
-    lrServer.listen(livereloadPort);
-  }
+  var config = {};
+  config.host = options.host || 'localhost';
+  config.port = options.port || 8000;
+  config.logLevel = options.logLevel || 'info';
+  config.middleware = util.isArray(options.middleware) ? options.middleware : [];
+  config.open = options.open === false ? false : true;
 
   var stream = through.obj(function (file, enc, callback) {
-    app.use(serveStatic(file.path));
+    config.server = {
+      baseDir: file.path
+    };
 
-    if (fallback) {
-      var fallbackFile = file.path + '/' + fallback;
+    browserSync(config);
 
-      if (fs.existsSync(fallbackFile)) {
-        app.use(function (req, res) {
-          fs.createReadStream(fallbackFile).pipe(res);
-        });
-      }
-    }
+    // if (fallback) {
+    //   var fallbackFile = file.path + '/' + fallback;
 
-    if (livereloadPort) {
-      watch(file.path, function (filename) {
-        lrServer.changed({
-          body: {
-            files: filename
-          }
-        });
-      });
-    }
+    //   if (fs.existsSync(fallbackFile)) {
+    //     // app.use(function (req, res) {
+    //     //   fs.createReadStream(fallbackFile).pipe(res);
+    //     // });
+    //   }
+    // }
+
+    watch(file.path, function (filename) {
+      browserSync.reload(filename);
+    });
 
     this.push(file);
 
     callback();
   });
 
-  var webserver = http.createServer(app).listen(port, host);
-  gutil.log('Webserver started at', gutil.colors.cyan('http://' + host + ':' + port));
+  gutil.log('Webserver started at', gutil.colors.cyan('http://' + config.host + ':' + config.port));
 
-  stream.on('kill', function () {
-    webserver.close();
-
-    if (livereloadPort) {
-      lrServer.close();
-    }
-  });
+  // stream.on('kill', function () {
+  //   browserSync.exit();
+  // });
 
   return stream;
 };
