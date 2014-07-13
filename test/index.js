@@ -2,20 +2,18 @@ var request = require('supertest');
 var webserver = require('../src');
 var File = require('gulp-util').File;
 
-describe('gulp-webserver', function() {
+describe('gulp-webserver', function () {
 
   var stream;
-
   var rootDir = new File({
     path: __dirname + '/fixtures'
   });
 
-  afterEach(function() {
+  afterEach(function () {
     stream.emit('kill');
   });
 
-  it('should work with default options', function(done) {
-
+  it('should work with default options', function (done) {
     stream = webserver();
 
     stream.write(rootDir);
@@ -23,15 +21,13 @@ describe('gulp-webserver', function() {
     request('http://localhost:8000')
       .get('/')
       .expect(200, /Hello World/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
         done(err);
       });
-
   });
 
-  it('should work with custom port', function(done) {
-
+  it('should work with custom port', function (done) {
     stream = webserver({
       port: 1111
     });
@@ -41,15 +37,13 @@ describe('gulp-webserver', function() {
     request('http://localhost:1111')
       .get('/')
       .expect(200, /Hello World/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
         done(err);
       });
-
   });
 
-  it('should work with custom host', function(done) {
-
+  it('should work with custom host', function (done) {
     stream = webserver({
       host: '0.0.0.0'
     });
@@ -59,15 +53,13 @@ describe('gulp-webserver', function() {
     request('http://0.0.0.0:8000')
       .get('/')
       .expect(200, /Hello World/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
         done(err);
       });
-
   });
 
-  it('should fall back to default.html', function(done) {
-
+  it('should fall back to default.html', function (done) {
     stream = webserver({
       fallback: 'default.html'
     });
@@ -77,11 +69,9 @@ describe('gulp-webserver', function() {
     request('http://localhost:8000')
       .get('/some/random/path/')
       .expect(200, /Default/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
         done(err);
       });
-
   });
-
 });
