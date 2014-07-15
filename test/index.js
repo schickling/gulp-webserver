@@ -1,87 +1,81 @@
 var request = require('supertest');
+var File = require('vinyl');
 var webserver = require('../src');
-var File = require('gulp-util').File;
 
-describe('gulp-webserver', function() {
+describe('gulp-webserver', function () {
 
   var stream;
-
   var rootDir = new File({
     path: __dirname + '/fixtures'
   });
 
-  afterEach(function() {
-    stream.emit('kill');
+  afterEach(function () {
+    stream.emit('close');
   });
 
-  it('should work with default options', function(done) {
-
-    stream = webserver();
-
-    stream.write(rootDir);
-
-    request('http://localhost:8000')
-      .get('/')
-      .expect(200, /Hello World/)
-      .end(function(err) {
-        if (err) return done(err);
-        done(err);
-      });
-
-  });
-
-  it('should work with custom port', function(done) {
-
+  it('should work with default options', function (done) {
     stream = webserver({
-      port: 1111
+      open: false
     });
 
-    stream.write(rootDir);
-
-    request('http://localhost:1111')
+    stream.write(rootDir, function () {
+      request('http://localhost:3000')
       .get('/')
       .expect(200, /Hello World/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
-        done(err);
+        done();
       });
-
+    });
   });
 
-  it('should work with custom host', function(done) {
-
+  it('should work with custom port', function (done) {
     stream = webserver({
-      host: '0.0.0.0'
+      open: false,
+      port: 9000
     });
 
-    stream.write(rootDir);
-
-    request('http://0.0.0.0:8000')
+    stream.write(rootDir, function () {
+      request('http://localhost:9000')
       .get('/')
       .expect(200, /Hello World/)
-      .end(function(err) {
+      .end(function (err) {
         if (err) return done(err);
-        done(err);
+        done();
       });
-
+    });
   });
 
-  it('should fall back to default.html', function(done) {
-
+  it('should work with custom host', function (done) {
     stream = webserver({
-      fallback: 'default.html'
+      open: false,
+      host: '127.0.0.1'
     });
 
-    stream.write(rootDir);
-
-    request('http://localhost:8000')
-      .get('/some/random/path/')
-      .expect(200, /Default/)
-      .end(function(err) {
+    stream.write(rootDir, function () {
+      request('http://127.0.0.1:3000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function (err) {
         if (err) return done(err);
-        done(err);
+        done();
       });
-
+    });
   });
 
+  // it('should fall back to default.html', function (done) {
+  //   stream = webserver({
+  //     fallback: 'default.html'
+  //   });
+
+  //   stream.write(rootDir);
+
+  //   request('http://127.0.0.1:8000')
+  //     .get('/some/random/path/')
+  //     .expect(200, /Default/)
+  //     .end(function (err) {
+  //       if (err) return done(err);
+  //       done(err);
+  //     });
+  // });
 });

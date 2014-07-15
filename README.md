@@ -29,7 +29,7 @@ gulp.task('webserver', function() {
 
 ## Options
 
-Key | Type | Default | Description | 
+Key | Type | Default | Description |
 --- | --- | --- | --- |
 `host` | String | `localhost` | hostname of the webserver
 `port` | Number | `8000` | port of the webserver
@@ -60,17 +60,3 @@ gulp.task('webserver', function() {
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
