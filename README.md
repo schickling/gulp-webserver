@@ -22,7 +22,8 @@ var webserver = require('gulp-webserver');
 gulp.task('webserver', function() {
   gulp.src('app')
     .pipe(webserver({
-      livereload: true
+      livereload: true,
+      directoryListing: true
     }));
 });
 ```
@@ -33,7 +34,8 @@ Key | Type | Default | Description |
 --- | --- | --- | --- |
 `host` | String | `localhost` | hostname of the webserver
 `port` | Number | `8000` | port of the webserver
-`livereload` | Boolean/Number | `false` | whether to use livereload (custom port also possible as value, default is `35729`)
+`livereload` | Boolean/Object | `false` | whether to use livereload. For advanced options, provide an object. You can use the 'port' property to set a custom live reload port.
+`directoryListing` | Boolean/Object | `false` | whether to display a directory listing. For advanced options, provide an object. You can use the 'path' property to set a custom path or the 'options' property to set custom [serve-index](https://github.com/expressjs/serve-index) options.
 `fallback` | String | `undefined` | file to fall back to (relative to webserver root)
 `https` | Boolean | `false` | *feature coming soon*
 `middleware` | Array | `[]` | *feature coming soon*

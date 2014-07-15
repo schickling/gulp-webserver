@@ -7,42 +7,88 @@ var connectLivereload = require('connect-livereload');
 var tinyLr = require('tiny-lr');
 var watch = require('node-watch');
 var fs = require('fs');
+var serveIndex = require('serve-index');
+var path = require('path');
+var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 
 module.exports = function(options) {
+  
+  var defaults = {
 
-  options = options || {};
+    /**
+     *
+     * BASIC DEFAULTS
+     *
+     **/
 
-  var host = options.host || 'localhost';
-  var port = options.port || 8000;
-  var livereloadPort = options.livereload || false;
+    host: 'localhost',
+    port: 8000,
+    fallback: false,
 
-  if (livereloadPort === true) {
-    livereloadPort = 35729;
-  }
+    /**
+     *
+     * MIDDLEWARE DEFAULTS
+     *
+     * NOTE:
+     *  All middleware should defaults should have the 'enable'
+     *  property if you want to support shorthand syntax like:
+     *
+     *    webserver({
+     *      livereload: true
+     *    });
+     *
+     */
 
-  var fallback = options.fallback;
+    // Middleware: Livereload
+    livereload: {
+      enable:false,
+      port: 35729
+    },
+
+    // Middleware: Directory listing
+    // For possible options, see: 
+    //  https://github.com/expressjs/serve-index
+    directoryListing: {
+      enable: false,
+      path: './',
+      options: undefined
+    }
+
+  };
+
+  // Deep extend user provided options over the all of the defaults
+  // Allow shorthand syntax, using the enable property as a flag
+  var config = enableMiddlewareShorthand(defaults, options, ['directoryListing','livereload']);
 
   var app = connect();
+
   var lrServer;
 
-  if (livereloadPort) {
+  if (config.livereload.enable) {
 
     app.use(connectLivereload({
-      port: livereloadPort
+      port: config.livereload.port
     }));
 
     lrServer = tinyLr();
-    lrServer.listen(livereloadPort);
+    lrServer.listen(config.livereload.port);
 
   }
 
+  if (config.directoryListing.enable) {
+
+      app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
+
+  }
+
+  // Create server
   var stream = through.obj(function(file, enc, callback) {
 
     app.use(serveStatic(file.path));
 
-    if (fallback) {
+    if (config.fallback) {
 
-      var fallbackFile = file.path + '/' + fallback;
+      var fallbackFile = file.path + '/' + config.fallback;
 
       if (fs.existsSync(fallbackFile)) {
 
@@ -53,7 +99,7 @@ module.exports = function(options) {
       }
     }
 
-    if (livereloadPort) {
+    if (config.livereload.enable) {
 
       watch(file.path, function(filename) {
 
@@ -73,15 +119,15 @@ module.exports = function(options) {
 
   });
 
-  var webserver = http.createServer(app).listen(port, host);
+  var webserver = http.createServer(app).listen(config.port, config.host);
 
-  gutil.log('Webserver started at', gutil.colors.cyan('http://' + host + ':' + port));
+  gutil.log('Webserver started at', gutil.colors.cyan('http://' + config.host + ':' + config.port));
 
   stream.on('kill', function() {
 
     webserver.close();
 
-    if (livereloadPort) {
+    if (config.livereload.enable) {
       lrServer.close();
     }
 
