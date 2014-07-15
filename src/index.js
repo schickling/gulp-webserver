@@ -1,6 +1,6 @@
 var browserSync = require('browser-sync');
 var through = require('through2');
-var gutil = require('gulp-util');
+var chalk = require('chalk');
 var watch = require('node-watch');
 var fs = require('fs');
 var util = require('util');
@@ -42,8 +42,6 @@ module.exports = function (options) {
 
     callback();
   });
-
-  gutil.log('Webserver started at', gutil.colors.cyan('http://' + config.host + ':' + config.port));
 
   // stream.on('kill', function () {
   //   browserSync.exit();
