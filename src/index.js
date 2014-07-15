@@ -12,8 +12,8 @@ module.exports = function (options) {
 
   var config = {};
   config.host = options.host || 'localhost';
-  config.port = options.port || 8000;
-  config.logLevel = options.logLevel || 'info';
+  config.port = options.port || 3000;
+  config.logLevel = options.logLevel || "info";
   config.middleware = util.isArray(options.middleware) ? options.middleware : [];
   config.open = options.open === false ? false : true;
 
@@ -22,7 +22,11 @@ module.exports = function (options) {
       baseDir: file.path
     };
 
-    browserSync(config);
+    browserSync(config, function (err, bs) {
+      stream.on('close', function() {
+        bs.cleanup();
+      });
+    });
 
     // if (fallback) {
     //   var fallbackFile = file.path + '/' + fallback;
@@ -42,10 +46,6 @@ module.exports = function (options) {
 
     callback();
   });
-
-  // stream.on('kill', function () {
-  //   browserSync.exit();
-  // });
 
   return stream;
 };
