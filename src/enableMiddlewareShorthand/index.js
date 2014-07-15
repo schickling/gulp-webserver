@@ -3,8 +3,8 @@ var extend = require('node.extend');
 // TODO: Make this its own npm module and repo
 module.exports = function(defaults, options, props)
 {
-  var originalDefaults = extend({},defaults);
-  var config = extend(defaults, options);
+  var originalDefaults = extend(true, {},defaults);
+  var config = extend(true, defaults, options);
 
   // If we get a single string, convert it to a single item array
   if(Object.prototype.toString.call(props) == '[object String]') {
