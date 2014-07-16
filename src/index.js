@@ -12,7 +12,7 @@ var path = require('path');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 
 module.exports = function(options) {
-  
+
   var defaults = {
 
     /**
@@ -46,7 +46,7 @@ module.exports = function(options) {
     },
 
     // Middleware: Directory listing
-    // For possible options, see: 
+    // For possible options, see:
     //  https://github.com/expressjs/serve-index
     directoryListing: {
       enable: false,
