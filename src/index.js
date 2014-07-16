@@ -82,22 +82,10 @@ module.exports = function(options) {
   }
 
   // Create server
+  var files = [];
+
   var stream = through.obj(function(file, enc, callback) {
-
     app.use(serveStatic(file.path));
-
-    if (config.fallback) {
-
-      var fallbackFile = file.path + '/' + config.fallback;
-
-      if (fs.existsSync(fallbackFile)) {
-
-        app.use(function(req, res) {
-          fs.createReadStream(fallbackFile).pipe(res);
-        });
-
-      }
-    }
 
     if (config.livereload.enable) {
 
@@ -117,6 +105,24 @@ module.exports = function(options) {
 
     callback();
 
+  });
+
+  stream.on('data', function(file) {
+    files.push(file)
+  });
+
+  stream.on('end', function() {
+    if (config.fallback) {
+      files.forEach(function(file){
+        var fallbackFile = file.path + '/' + config.fallback;
+
+        if (fs.existsSync(fallbackFile)) {
+          app.use(function(req, res) {
+            fs.createReadStream(fallbackFile).pipe(res);
+          });
+        }
+      });
+    }
   });
 
   var webserver = http.createServer(app).listen(config.port, config.host);
