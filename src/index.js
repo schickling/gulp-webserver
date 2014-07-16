@@ -12,7 +12,7 @@ var path = require('path');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 
 module.exports = function(options) {
-  
+
   var defaults = {
 
     /**
@@ -46,7 +46,7 @@ module.exports = function(options) {
     },
 
     // Middleware: Directory listing
-    // For possible options, see: 
+    // For possible options, see:
     //  https://github.com/expressjs/serve-index
     directoryListing: {
       enable: false,
@@ -82,22 +82,10 @@ module.exports = function(options) {
   }
 
   // Create server
+  var files = [];
+
   var stream = through.obj(function(file, enc, callback) {
-
     app.use(serveStatic(file.path));
-
-    if (config.fallback) {
-
-      var fallbackFile = file.path + '/' + config.fallback;
-
-      if (fs.existsSync(fallbackFile)) {
-
-        app.use(function(req, res) {
-          fs.createReadStream(fallbackFile).pipe(res);
-        });
-
-      }
-    }
 
     if (config.livereload.enable) {
 
@@ -117,6 +105,24 @@ module.exports = function(options) {
 
     callback();
 
+  });
+
+  stream.on('data', function(file) {
+    files.push(file)
+  });
+
+  stream.on('end', function() {
+    if (config.fallback) {
+      files.forEach(function(file){
+        var fallbackFile = file.path + '/' + config.fallback;
+
+        if (fs.existsSync(fallbackFile)) {
+          app.use(function(req, res) {
+            fs.createReadStream(fallbackFile).pipe(res);
+          });
+        }
+      });
+    }
   });
 
   var webserver = http.createServer(app).listen(config.port, config.host);
