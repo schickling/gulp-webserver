@@ -1,6 +1,7 @@
 var through = require('through2');
 var gutil = require('gulp-util');
 var http = require('http');
+var https = require('https');
 var connect = require('connect');
 var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
@@ -12,7 +13,7 @@ var path = require('path');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 
 module.exports = function(options) {
-  
+
   var defaults = {
 
     /**
@@ -24,6 +25,7 @@ module.exports = function(options) {
     host: 'localhost',
     port: 8000,
     fallback: false,
+    https: false,
 
     /**
      *
@@ -46,7 +48,7 @@ module.exports = function(options) {
     },
 
     // Middleware: Directory listing
-    // For possible options, see: 
+    // For possible options, see:
     //  https://github.com/expressjs/serve-index
     directoryListing: {
       enable: false,
@@ -119,9 +121,18 @@ module.exports = function(options) {
 
   });
 
-  var webserver = http.createServer(app).listen(config.port, config.host);
+  if (config.https) {
+    var options = {
+      key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+      cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+    };
+    var webserver = https.createServer(options, app).listen(config.port, config.host);
+  }
+  else {
+    var webserver = http.createServer(app).listen(config.port, config.host);
+  }
 
-  gutil.log('Webserver started at', gutil.colors.cyan('http://' + config.host + ':' + config.port));
+  gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
 
   stream.on('kill', function() {
 
