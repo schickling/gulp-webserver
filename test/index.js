@@ -2,6 +2,9 @@ var request = require('supertest');
 var webserver = require('../src');
 var File = require('gulp-util').File;
 
+// Some configuration to enable https testing
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 describe('gulp-webserver', function() {
 
   var stream;
@@ -61,6 +64,45 @@ describe('gulp-webserver', function() {
     stream.write(rootDir);
 
     request('http://0.0.0.0:8000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
+  it('should work with https', function(done) {
+
+    stream = webserver({
+      https: true
+    });
+
+    stream.write(rootDir);
+
+    request('https://localhost:8000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
+  it('should work with https and a custom certificate', function(done) {
+
+    stream = webserver({
+      https: {
+        key: __dirname + '/../ssl/dev-key.pem',
+        cert: __dirname + '/../ssl/dev-cert.pem'
+      }
+    });
+
+    stream.write(rootDir);
+
+    request('https://localhost:8000')
       .get('/')
       .expect(200, /Hello World/)
       .end(function(err) {
@@ -173,7 +215,7 @@ describe('gulp-webserver', function() {
             done(new Error('livereload should not be started when shorthand middleware setting is set to false'));
           }
         }
-        
+
       });
   });
 
