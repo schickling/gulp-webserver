@@ -37,6 +37,7 @@ Key | Type | Default | Description |
 `livereload` | Boolean/Object | `false` | whether to use livereload. For advanced options, provide an object. You can use the 'port' property to set a custom live reload port.
 `directoryListing` | Boolean/Object | `false` | whether to display a directory listing. For advanced options, provide an object. You can use the 'path' property to set a custom path or the 'options' property to set custom [serve-index](https://github.com/expressjs/serve-index) options.
 `fallback` | String | `undefined` | file to fall back to (relative to webserver root)
+`open` | Boolean/Object | `false` | open the localhost server in the browser
 `https` | Boolean/Object | `false` | whether to use https or not. By default, `gulp-webserver` provides you with a development certificate but you remain free to specify a path for your key and certificate by providing an object like this one: `{key: 'path/to/key.pem', cert: 'path/to/cert.pem'}`.
 `middleware` | Array | `[]` | *feature coming soon*
 
