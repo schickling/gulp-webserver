@@ -5,12 +5,14 @@ var https = require('https');
 var connect = require('connect');
 var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
+var proxy = require('proxy-middleware');
 var tinyLr = require('tiny-lr');
 var watch = require('node-watch');
 var fs = require('fs');
 var serveIndex = require('serve-index');
 var path = require('path');
 var open = require('open');
+var url = require('url');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 
 module.exports = function(options) {
@@ -56,7 +58,12 @@ module.exports = function(options) {
       enable: false,
       path: './',
       options: undefined
-    }
+    },
+
+    // Middleware: Proxy
+    // For possible options, see:
+    //  https://github.com/andrewrk/connect-proxy
+    proxies: []
 
   };
 
@@ -65,12 +72,12 @@ module.exports = function(options) {
   var config = enableMiddlewareShorthand(defaults, options, ['directoryListing','livereload']);
 
   var app = connect();
-  
+
   var openInBrowser = function () {
   	if(config.open === false) return;
     open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port);
   };
-  
+
   var lrServer;
 
   if (config.livereload.enable) {
@@ -89,6 +96,12 @@ module.exports = function(options) {
       app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
 
   }
+
+  // Proxy requests
+  for (var i = 0, len = config.proxies.length; i < len; i ++) {
+    app.use(config.proxies[i].source, proxy(url.parse(config.proxies[i].target)));
+  }
+
 
   // Create server
   var stream = through.obj(function(file, enc, callback) {

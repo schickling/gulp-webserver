@@ -17,6 +17,10 @@ describe('gulp-webserver', function() {
     path: __dirname + '/fixtures/directoryIndexMissing'
   });
 
+  var directoryProxiedDir = new File({
+    path: __dirname + '/fixtures/directoryProxied'
+  });
+
   afterEach(function() {
     stream.emit('kill');
   });
@@ -217,6 +221,37 @@ describe('gulp-webserver', function() {
         }
 
       });
+  });
+
+
+  it('should proxy requests to localhost:8001', function (done) {
+
+    stream = webserver({
+      proxies: [{source: '/proxied', target: 'http://localhost:8001'}]
+    });
+
+    stream.write(rootDir);
+
+    proxyStream = webserver({
+      port: 8001
+    });
+
+    proxyStream.write(directoryProxiedDir);
+
+    request('http://localhost:8000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+      });
+    request('http://localhost:8000')
+      .get('/proxied')
+      .expect(200, /I am Ron Burgandy?/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
   });
 
 });
