@@ -144,7 +144,7 @@ describe('gulp-webserver', function() {
 
     request('http://localhost:8000')
       .get('/')
-      .expect(200,/listing directory/)
+      .expect(200, /listing directory/)
       .end(function(err) {
         if (err) return done(err);
         done(err);
@@ -162,7 +162,7 @@ describe('gulp-webserver', function() {
 
     request('http://localhost:8000')
       .get('/')
-      .expect(404,/Cannot GET/)
+      .expect(404, /Cannot GET/)
       .end(function(err) {
         if (err) return done(err);
         done(err);
@@ -180,18 +180,43 @@ describe('gulp-webserver', function() {
 
     request('http://localhost:8000')
       .get('/')
-      .expect(200,/Hello World/)
+      .expect(200, /Hello World/)
       .end(function(err) {
         if (err) return done(err);
       });
     request('http://localhost:35729')
       .get('/')
-      .expect(200,/tinylr/)
+      .expect(200, /tinylr/)
       .end(function(err) {
         if (err) return done(err);
         done(err);
       });
   });
+
+  it('should start the livereload server with ssl on', function(done) {
+
+    stream = webserver({
+      livereload: true,
+      https: true
+    });
+
+    stream.write(rootDir);
+
+    request('https://localhost:8000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+      });
+    request('https://localhost:35729')
+      .get('/')
+      .expect(200, /tinylr/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+  });
+
 
   it('should not start the livereload server when the shorthand setting is disabled', function(done) {
 
@@ -203,14 +228,14 @@ describe('gulp-webserver', function() {
 
     request('http://localhost:8000')
       .get('/')
-      .expect(200,/Hello World/)
+      .expect(200, /Hello World/)
       .end(function(err) {
         if (err) return done(err);
       });
     request('http://localhost:35729')
       .get('/')
       .end(function(err) {
-        if(err && err.code === "ECONNREFUSED") {
+        if (err && err.code === "ECONNREFUSED") {
           done();
         } else {
           if (err) {
@@ -224,10 +249,13 @@ describe('gulp-webserver', function() {
   });
 
 
-  it('should proxy requests to localhost:8001', function (done) {
+  it('should proxy requests to localhost:8001', function(done) {
 
     stream = webserver({
-      proxies: [{source: '/proxied', target: 'http://localhost:8001'}]
+      proxies: [{
+        source: '/proxied',
+        target: 'http://localhost:8001'
+      }]
     });
 
     stream.write(rootDir);

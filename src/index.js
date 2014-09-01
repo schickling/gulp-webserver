@@ -47,7 +47,7 @@ module.exports = function(options) {
 
     // Middleware: Livereload
     livereload: {
-      enable:false,
+      enable: false,
       port: 35729
     },
 
@@ -69,12 +69,15 @@ module.exports = function(options) {
 
   // Deep extend user provided options over the all of the defaults
   // Allow shorthand syntax, using the enable property as a flag
-  var config = enableMiddlewareShorthand(defaults, options, ['directoryListing','livereload']);
+  var config = enableMiddlewareShorthand(defaults, options, [
+    'directoryListing',
+    'livereload'
+  ]);
 
   var app = connect();
 
-  var openInBrowser = function () {
-  	if(config.open === false) return;
+  var openInBrowser = function() {
+    if (config.open === false) return;
     open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port);
   };
 
@@ -86,19 +89,25 @@ module.exports = function(options) {
       port: config.livereload.port
     }));
 
-    lrServer = tinyLr();
+    if (config.https) {
+      lrServer = tinyLr({
+        key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+        cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+      });
+    } else {
+      lrServer = tinyLr();
+    }
+
     lrServer.listen(config.livereload.port);
 
   }
 
   if (config.directoryListing.enable) {
-
-      app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
-
+    app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
 
   // Proxy requests
-  for (var i = 0, len = config.proxies.length; i < len; i ++) {
+  for (var i = 0, len = config.proxies.length; i < len; i++) {
     app.use(config.proxies[i].source, proxy(url.parse(config.proxies[i].target)));
   }
 
@@ -141,15 +150,16 @@ module.exports = function(options) {
 
   });
 
+  var webserver;
+
   if (config.https) {
-    var options = {
+    var opts = {
       key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
       cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
     };
-    var webserver = https.createServer(options, app).listen(config.port, config.host, openInBrowser);
-  }
-  else {
-    var webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
+    webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
+  } else {
+    webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
