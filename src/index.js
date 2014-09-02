@@ -74,11 +74,16 @@ module.exports = function(options) {
     'livereload'
   ]);
 
+  if (typeof config.open === 'string' && config.open.length > 0) {
+    // ensure leading slash
+    config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
+  }
+
   var app = connect();
 
   var openInBrowser = function() {
     if (config.open === false) return;
-    open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port);
+    open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
   };
 
   var lrServer;
