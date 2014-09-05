@@ -95,10 +95,18 @@ module.exports = function(options) {
     }));
 
     if (config.https) {
-      lrServer = tinyLr({
-        key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
-        cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
-      });
+      if (config.https.pfx) {
+        lrServer = tinyLr({
+          pfx: fs.readFileSync(config.https.pfx),
+          passphrase: config.https.passphrase
+        });
+      }
+      else {
+        lrServer = tinyLr({
+          key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+          cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+        });
+      }
     } else {
       lrServer = tinyLr();
     }
@@ -158,10 +166,19 @@ module.exports = function(options) {
   var webserver;
 
   if (config.https) {
-    var opts = {
-      key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
-      cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
-    };
+    var opts; 
+
+    if (config.https.pfx) {
+      opts = {
+        pfx: fs.readFileSync(config.https.pfx),
+        passphrase: config.https.passphrase
+      };
+    } else {
+      opts = {
+        key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+        cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+      };
+    }
     webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
   } else {
     webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
