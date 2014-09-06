@@ -48,7 +48,12 @@ module.exports = function(options) {
     // Middleware: Livereload
     livereload: {
       enable: false,
-      port: 35729
+      port: 35729,
+      filter: function (filename) {
+        if (filename.match(/node_modules/)) {
+          return false;
+        } else { return true; }
+      }
     },
 
     // Middleware: Directory listing
@@ -146,11 +151,7 @@ module.exports = function(options) {
     if (config.livereload.enable) {
       var watchOptions = {
         ignoreDotFiles: true,
-        filter: function (filename) {
-          if (filename.match(/node_modules/)) {
-            return false;
-          } else { return true; }
-        }
+        filter: config.livereload.filter
       };
       watch.watchTree(file.path, watchOptions, function (filename) {
         lrServer.changed({

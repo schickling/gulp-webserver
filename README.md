@@ -35,7 +35,7 @@ Key | Type | Default | Description |
 --- | --- | --- | --- |
 `host` | String | `localhost` | hostname of the webserver
 `port` | Number | `8000` | port of the webserver
-`livereload` | Boolean/Object | `false` | whether to use livereload. For advanced options, provide an object. You can use the 'port' property to set a custom live reload port.
+`livereload` | Boolean/Object | `false` | whether to use livereload. For advanced options, provide an object. You can use the 'port' property to set a custom live reload port and the `filter` function to filter out files to watch.
 `directoryListing` | Boolean/Object | `false` | whether to display a directory listing. For advanced options, provide an object. You can use the 'path' property to set a custom path or the 'options' property to set custom [serve-index](https://github.com/expressjs/serve-index) options.
 `fallback` | String | `undefined` | file to fall back to (relative to webserver root)
 `open` | Boolean/String | `false` | open the localhost server in the browser. By providing a String you can specify the path to open.
