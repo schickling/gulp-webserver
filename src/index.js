@@ -7,7 +7,7 @@ var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
 var proxy = require('proxy-middleware');
 var tinyLr = require('tiny-lr');
-var watch = require('node-watch');
+var watch = require('watch');
 var fs = require('fs');
 var serveIndex = require('serve-index');
 var path = require('path');
@@ -144,9 +144,15 @@ module.exports = function(options) {
     }
 
     if (config.livereload.enable) {
-
-      watch(file.path, function(filename) {
-
+      var watchOptions = {
+        ignoreDotFiles: true,
+        filter: function (filename) {
+          if (filename.match(/node_modules/)) {
+            return false;
+          } else { return true; }
+        }
+      };
+      watch.watchTree(file.path, watchOptions, function (filename) {
         lrServer.changed({
           body: {
             files: filename
