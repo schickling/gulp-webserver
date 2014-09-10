@@ -16,4 +16,4 @@ test coverage as files change.
    they add or change current functionality.
 5. Commit your changes (`git commit -am 'Added some new feature`)
 6. Push to the branch (`git push origin my-new-feature`)
-7. Create a pull request
+7. Create a [pull request](https://help.github.com/articles/using-pull-requests)
