@@ -278,6 +278,7 @@ describe('gulp-webserver', function() {
       .end(function(err) {
         if (err) return done(err);
         done(err);
+        proxyStream.emit('kill');
       });
 
   });
