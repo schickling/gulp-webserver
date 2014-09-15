@@ -116,7 +116,7 @@ module.exports = function(options) {
       lrServer = tinyLr();
     }
 
-    lrServer.listen(config.livereload.port);
+    lrServer.listen(config.livereload.port, config.host);
 
   }
 
