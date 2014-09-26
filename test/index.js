@@ -127,6 +127,7 @@ describe('gulp-webserver', function() {
     request('http://localhost:8000')
       .get('/some/random/path/')
       .expect(200, /Default/)
+      .expect('Content-Type', /text\/html; charset=utf-8/)
       .end(function(err) {
         if (err) return done(err);
         done(err);
