@@ -117,17 +117,36 @@ describe('gulp-webserver', function() {
   });
 
   it('should fall back to default.html', function(done) {
-
     stream = webserver({
       fallback: 'default.html'
     });
 
     stream.write(rootDir);
+    stream.end();
 
     request('http://localhost:8000')
       .get('/some/random/path/')
       .expect(200, /Default/)
-      .expect('Content-Type', /text\/html; charset=utf-8/)
+      .expect('Content-Type', /text\/html; charset=UTF-8/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
+  it('should serve multiple sources even with a fallback', function(done) {
+    stream = webserver({
+      fallback: 'default.html'
+    });
+
+    stream.write(rootDir);
+    stream.write(directoryIndexMissingDir);
+    stream.end();
+
+    request('http://localhost:8000')
+      .get('/file.html')
+      .expect(200, /file/)
       .end(function(err) {
         if (err) return done(err);
         done(err);
