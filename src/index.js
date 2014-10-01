@@ -130,24 +130,12 @@ module.exports = function(options) {
   }
 
 
+  var files = [];
+
   // Create server
   var stream = through.obj(function(file, enc, callback) {
 
     app.use(serveStatic(file.path));
-
-    if (config.fallback) {
-
-      var fallbackFile = file.path + '/' + config.fallback;
-
-      if (fs.existsSync(fallbackFile)) {
-
-        app.use(function(req, res) {
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          fs.createReadStream(fallbackFile).pipe(res);
-        });
-
-      }
-    }
 
     if (config.livereload.enable) {
       var watchOptions = {
@@ -162,13 +150,24 @@ module.exports = function(options) {
         });
 
       });
-
     }
 
     this.push(file);
-
     callback();
-
+  })
+  .on('data', function(f){files.push(f);})
+  .on('end', function(){
+    if (config.fallback) {
+      files.forEach(function(file){
+        var fallbackFile = file.path + '/' + config.fallback;
+        if (fs.existsSync(fallbackFile)) {
+          app.use(function(req, res) {
+            res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+            fs.createReadStream(fallbackFile).pipe(res);
+          });
+        }
+      });
+    }
   });
 
   var webserver;
