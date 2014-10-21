@@ -30,6 +30,7 @@ module.exports = function(options) {
     fallback: false,
     https: false,
     open: false,
+    browser: undefined,
 
     /**
      *
@@ -88,7 +89,7 @@ module.exports = function(options) {
 
   var openInBrowser = function() {
     if (config.open === false) return;
-    open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
+    open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''), config.browser);
   };
 
   var lrServer;

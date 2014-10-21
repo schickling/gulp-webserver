@@ -24,7 +24,8 @@ gulp.task('webserver', function() {
     .pipe(webserver({
       livereload: true,
       directoryListing: true,
-      open: true
+      open: true,
+      browser: 'firefox'
     }));
 });
 ```
@@ -42,6 +43,7 @@ Key | Type | Default | Description |
 `https` | Boolean/Object | `false` | whether to use https or not. By default, `gulp-webserver` provides you with a development certificate but you remain free to specify a path for your key and certificate by providing an object like this one: `{key: 'path/to/key.pem', cert: 'path/to/cert.pem'}`.
 `middleware` | Array | `[]` | *feature coming soon*
 `proxies` | Array | `[]`| a list of proxy objects.  Each proxy object can be specified by `{source: '/abc', target: 'http://localhost:8080/abc'}`.
+`browser` | String | `undefined` | browser name
 
 ## FAQ
 
