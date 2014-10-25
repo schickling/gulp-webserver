@@ -13,7 +13,9 @@ var serveIndex = require('serve-index');
 var path = require('path');
 var open = require('open');
 var url = require('url');
+var extend = require('node.extend');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
+
 
 module.exports = function(options) {
 
@@ -126,7 +128,11 @@ module.exports = function(options) {
 
   // Proxy requests
   for (var i = 0, len = config.proxies.length; i < len; i++) {
-    app.use(config.proxies[i].source, proxy(url.parse(config.proxies[i].target)));
+    var proxyoptions = url.parse(config.proxies[i].target);
+    if (config.proxies[i].hasOwnProperty('options')) {
+      extend(proxyoptions, config.proxies[i].options);
+    }
+    app.use(config.proxies[i].source, proxy(proxyoptions));
   }
 
 

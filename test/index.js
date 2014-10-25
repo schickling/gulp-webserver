@@ -8,7 +8,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 describe('gulp-webserver', function() {
 
   var stream;
-
+  var proxyStream;
+  
   var rootDir = new File({
     path: __dirname + '/fixtures'
   });
@@ -23,6 +24,9 @@ describe('gulp-webserver', function() {
 
   afterEach(function() {
     stream.emit('kill');
+    if( proxyStream) {
+      proxyStream.emit('kill');
+    }
   });
 
   it('should work with default options', function(done) {
@@ -300,6 +304,43 @@ describe('gulp-webserver', function() {
         done(err);
       });
 
+  });
+
+  it('should configure proxy with options', function(done) {
+
+    stream = webserver({
+      proxies: [{
+        source: '/proxied',
+        target: 'http://localhost:8001',
+        options: {
+          headers: {
+            'X-forwarded-host': 'localhost:8000'
+          }
+        }
+      }]
+    });
+
+    stream.write(rootDir);
+
+    proxyStream = webserver({
+      port: 8001
+    });
+
+    proxyStream.write(directoryProxiedDir);
+
+    request('http://localhost:8000')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+      });
+    request('http://localhost:8000')
+      .get('/proxied')
+      .expect(200, /I am Ron Burgandy?/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
   });
 
 });
