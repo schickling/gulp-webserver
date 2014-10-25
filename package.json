@@ -1,6 +1,6 @@
 {
   "name": "gulp-webserver",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Gulp plugin to run a local webserver with LiveReload",
   "main": "src/index.js",
   "scripts": {
