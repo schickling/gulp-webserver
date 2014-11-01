@@ -24,8 +24,9 @@ describe('gulp-webserver', function() {
 
   afterEach(function() {
     stream.emit('kill');
-    if( proxyStream) {
+    if (proxyStream) {
       proxyStream.emit('kill');
+      proxyStream = undefined;
     }
   });
 
@@ -341,6 +342,15 @@ describe('gulp-webserver', function() {
         if (err) return done(err);
         done(err);
       });
+  });
+
+  this.timeout(20);
+  it('should accept `true` as an open option', function(done){
+    stream = webserver({
+      open: true
+    });
+    stream.write(rootDir);
+    setTimeout(done, 15);
   });
 
 });

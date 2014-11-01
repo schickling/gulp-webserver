@@ -90,7 +90,7 @@ module.exports = function(options) {
 
   var openInBrowser = function() {
     if (config.open === false) return;
-    if (config.open.indexOf('http') === 0) {
+    if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
       // if this is a complete url form
       open(config.open);
       return;
