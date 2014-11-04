@@ -81,8 +81,8 @@ module.exports = function(options) {
     'livereload'
   ]);
 
-  if (typeof config.open === 'string' && config.open.length > 0) {
-    // ensure leading slash
+  if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
+    // ensure leading slash if this is NOT a complete url form
     config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
   }
 
