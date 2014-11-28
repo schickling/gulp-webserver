@@ -84,6 +84,15 @@ gulp.task('webserver', function() {
 });
 ```
 
+#### How can I kill the running server?
+
+**Solution**: Either by pressing `Ctrl + C` or programmatically like in this example:
+
+```js
+var stream = gulp.src('app').pipe(webserver());
+stream.emit('kill');
+```
+
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
