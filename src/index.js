@@ -127,10 +127,6 @@ module.exports = function(options) {
 
   }
 
-  if (config.directoryListing.enable) {
-    app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
-  }
-
   // Proxy requests
   for (var i = 0, len = config.proxies.length; i < len; i++) {
     var proxyoptions = url.parse(config.proxies[i].target);
@@ -138,6 +134,10 @@ module.exports = function(options) {
       extend(proxyoptions, config.proxies[i].options);
     }
     app.use(config.proxies[i].source, proxy(proxyoptions));
+  }
+
+  if (config.directoryListing.enable) {
+    app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
 
 
