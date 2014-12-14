@@ -9,7 +9,7 @@ describe('gulp-webserver', function() {
 
   var stream;
   var proxyStream;
-  
+
   var rootDir = new File({
     path: __dirname + '/fixtures'
   });
@@ -351,6 +351,68 @@ describe('gulp-webserver', function() {
     });
     stream.write(rootDir);
     setTimeout(done, 15);
+  });
+
+  it('should use middleware function', function(done) {
+    stream = webserver({
+      middleware: function(req, res, next) {
+        if (req.url === '/middleware') {
+          res.end('middleware');
+        } else {
+          next();
+        }
+      }
+    });
+
+    stream.write(rootDir);
+
+    request('http://localhost:8000')
+      .get('/middleware')
+      .expect(200, 'middleware')
+      .end(function(err) {
+        if (err) return done(err);
+        done();
+      });
+  });
+
+  it('should use middleware array', function(done) {
+    stream = webserver({
+      middleware: [
+        function m1(req, res, next) {
+          if (req.url === '/middleware1') {
+            res.end('middleware1');
+          } else {
+            next();
+          }
+        },
+        function m2(req, res, next) {
+          if (req.url === '/middleware2') {
+            res.end('middleware2');
+          } else {
+            next();
+          }
+        },
+      ]
+    });
+
+    stream.write(rootDir);
+
+    var count = 0;
+    function end(err) {
+      if (err) return done(err);
+      count++;
+      if (count === 2) done();
+    }
+
+    request('http://localhost:8000')
+      .get('/middleware1')
+      .expect(200, 'middleware1')
+      .end(end);
+
+    request('http://localhost:8000')
+      .get('/middleware2')
+      .expect(200, 'middleware2')
+      .end(end);
   });
 
 });

@@ -40,7 +40,7 @@ Key | Type | Default | Description |
 `fallback` | String | `undefined` | file to fall back to (relative to webserver root)
 `open` | Boolean/String | `false` | open the localhost server in the browser. By providing a String you can specify the path to open (for complete path, use the complete url `http://my-server:8080/public/`) .
 `https` | Boolean/Object | `false` | whether to use https or not. By default, `gulp-webserver` provides you with a development certificate but you remain free to specify a path for your key and certificate by providing an object like this one: `{key: 'path/to/key.pem', cert: 'path/to/cert.pem'}`.
-`middleware` | Array | `[]` | *feature coming soon*
+`middleware` | Function/Array | `[]` | a connect middleware function or a list of middleware functions
 `proxies` | Array | `[]`| a list of proxy objects.  Each proxy object can be specified by `{source: '/abc', target: 'http://localhost:8080/abc', options: {headers: {'ABC_HEADER': 'abc'}}}`.
 
 ## FAQ
@@ -96,16 +96,3 @@ stream.emit('kill');
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
-
-
-
-
-
-
-
-
-
-
-
-
-
