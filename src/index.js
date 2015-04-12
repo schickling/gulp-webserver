@@ -30,6 +30,7 @@ module.exports = function(options) {
 
     host: 'localhost',
     port: 8000,
+    path: '/',
     fallback: false,
     https: false,
     open: false,
@@ -149,7 +150,7 @@ module.exports = function(options) {
   }
 
   if (config.directoryListing.enable) {
-    app.use(serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
+    app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
 
 
@@ -158,7 +159,7 @@ module.exports = function(options) {
   // Create server
   var stream = through.obj(function(file, enc, callback) {
 
-    app.use(serveStatic(file.path));
+    app.use(config.path, serveStatic(file.path));
 
     if (config.livereload.enable) {
       var watchOptions = {
