@@ -82,6 +82,24 @@ describe('gulp-webserver', function() {
 
   });
 
+  it('should work with custom path', function(done) {
+
+    stream = webserver({
+      path: '/custom/path'
+    });
+
+    stream.write(rootDir);
+
+    request('http://localhost:8000/custom/path')
+      .get('/')
+      .expect(200, /Hello World/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
   it('should work with https', function(done) {
 
     stream = webserver({
@@ -168,6 +186,25 @@ describe('gulp-webserver', function() {
     stream.write(directoryIndexMissingDir);
 
     request('http://localhost:8000')
+      .get('/')
+      .expect(200, /listing directory/)
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+
+  });
+
+  it('should show a directory listing when the shorthand setting is enabled and using custom path', function(done) {
+
+    stream = webserver({
+      directoryListing: true,
+      path: '/custom/path'
+    });
+
+    stream.write(directoryIndexMissingDir);
+
+    request('http://localhost:8000/custom/path')
       .get('/')
       .expect(200, /listing directory/)
       .end(function(err) {
