@@ -15,7 +15,6 @@ var open = require('open');
 var url = require('url');
 var extend = require('node.extend');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
-var isarray = require('isarray');
 
 
 module.exports = function(options) {
@@ -132,7 +131,7 @@ module.exports = function(options) {
   // middlewares
   if (typeof config.middleware === 'function') {
     app.use(config.middleware);
-  } else if (isarray(config.middleware)) {
+  } else if (Array.isArray(config.middleware)) {
     config.middleware
       .filter(function(m) { return typeof m === 'function'; })
       .forEach(function(m) {
