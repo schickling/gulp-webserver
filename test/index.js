@@ -381,6 +381,31 @@ describe('gulp-webserver', function() {
       });
   });
 
+  it('should handle compression', function(done){
+    stream = webserver({
+      compression: true
+    });
+
+    stream.write(rootDir);
+
+    request('http://localhost:8000/')
+      .get('/lorem.txt')
+      .set('accept-encoding', 'gzip')
+      .expect('content-encoding', 'gzip')
+      .end(function(err) {
+        if (err) return done(err);
+      });
+
+    request('http://localhost:8000/')
+      .get('/lorem.txt')
+      .set('accept-encoding', 'deflate')
+      .expect('content-encoding', 'deflate')
+      .end(function(err) {
+        if (err) return done(err);
+        done(err);
+      });
+  });
+
   this.timeout(20);
   it('should accept `true` as an open option', function(done){
     stream = webserver({
@@ -450,31 +475,6 @@ describe('gulp-webserver', function() {
       .get('/middleware2')
       .expect(200, 'middleware2')
       .end(end);
-  });
-
-  it('should handle gzip and deflate header', function(done){
-    stream = webserver({
-      compression: true
-    });
-
-    stream.write(rootDir);
-
-    request('http://localhost:8000/')
-      .get('/lorem.txt')
-      .set('accept-encoding', 'gzip')
-      .expect('content-encoding', 'gzip')
-      .end(function(err) {
-        if (err) return done(err);
-      });
-
-    request('http://localhost:8000/')
-      .get('/lorem.txt')
-      .set('accept-encoding', 'deflate')
-      .expect('content-encoding', 'deflate')
-      .end(function(err) {
-        if (err) return done(err);
-        done(err);
-      });
   });
 
 });
