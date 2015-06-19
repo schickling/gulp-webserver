@@ -16,6 +16,7 @@ var url = require('url');
 var extend = require('node.extend');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 var isarray = require('isarray');
+var compression = require('compression');
 
 
 module.exports = function(options) {
@@ -34,6 +35,7 @@ module.exports = function(options) {
     fallback: false,
     https: false,
     open: false,
+    compression: false,
 
     /**
      *
@@ -153,6 +155,9 @@ module.exports = function(options) {
     app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
 
+  if(config.compression) {
+    app.use(compression());
+  }
 
   var files = [];
 
