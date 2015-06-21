@@ -164,7 +164,8 @@ module.exports = function(options) {
     if (config.livereload.enable) {
       var watchOptions = {
         ignoreDotFiles: true,
-        filter: config.livereload.filter
+        filter: config.livereload.filter,
+        interval: 500
       };
       watch.watchTree(file.path, watchOptions, function (filename) {
         lrServer.changed({
