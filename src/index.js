@@ -56,7 +56,9 @@ module.exports = function(options) {
       filter: function (filename) {
         if (filename.match(/node_modules/)) {
           return false;
-        } else { return true; }
+        } else {
+          return true;
+        }
       }
     },
 
@@ -91,7 +93,9 @@ module.exports = function(options) {
   var app = connect();
 
   var openInBrowser = function() {
-    if (config.open === false) return;
+    if (config.open === false) {
+      return;
+    }
     if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
       // if this is a complete url form
       open(config.open);
@@ -100,13 +104,13 @@ module.exports = function(options) {
     open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
   };
 
-  var lrServer;
-
   if (config.livereload.enable) {
 
     app.use(connectLivereload({
       port: config.livereload.port
     }));
+
+    var lrServer;
 
     if (config.https) {
       if (config.https.pfx) {
@@ -114,8 +118,7 @@ module.exports = function(options) {
           pfx: fs.readFileSync(config.https.pfx),
           passphrase: config.https.passphrase
         });
-      }
-      else {
+      } else {
         lrServer = tinyLr({
           key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
           cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
@@ -134,7 +137,9 @@ module.exports = function(options) {
     app.use(config.middleware);
   } else if (isarray(config.middleware)) {
     config.middleware
-      .filter(function(m) { return typeof m === 'function'; })
+      .filter(function(m) {
+        return typeof m === 'function';
+      })
       .forEach(function(m) {
         app.use(m);
       });
@@ -150,7 +155,13 @@ module.exports = function(options) {
   }
 
   if (config.directoryListing.enable) {
-    app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
+    app.use(
+      config.path,
+      serveIndex(
+        path.resolve(config.directoryListing.path),
+        config.directoryListing.options
+      )
+    );
   }
 
 
@@ -172,17 +183,18 @@ module.exports = function(options) {
             files: filename
           }
         });
-
       });
     }
 
     this.push(file);
     callback();
   })
-  .on('data', function(f){files.push(f);})
-  .on('end', function(){
+  .on('data', function(f) {
+    files.push(f);
+  })
+  .on('end', function() {
     if (config.fallback) {
-      files.forEach(function(file){
+      files.forEach(function(file) {
         var fallbackFile = file.path + '/' + config.fallback;
         if (fs.existsSync(fallbackFile)) {
           app.use(function(req, res) {
