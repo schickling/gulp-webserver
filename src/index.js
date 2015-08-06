@@ -53,6 +53,7 @@ module.exports = function(options) {
     livereload: {
       enable: false,
       port: 35729,
+      pollingInterval: 200,
       filter: function (filename) {
         if (filename.match(/node_modules/)) {
           return false;
@@ -164,7 +165,8 @@ module.exports = function(options) {
     if (config.livereload.enable) {
       var watchOptions = {
         ignoreDotFiles: true,
-        filter: config.livereload.filter
+        filter: config.livereload.filter,
+        interval: config.livereload.pollingInterval
       };
       watch.watchTree(file.path, watchOptions, function (filename) {
         lrServer.changed({
