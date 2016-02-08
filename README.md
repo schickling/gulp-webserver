@@ -85,6 +85,10 @@ gulp.task('webserver', function() {
 });
 ```
 
+#### Why is Livereload is not working?
+
+**Solution**: Make sure your loaded HTML file has a `<body>` tag.
+
 #### How can I kill the running server?
 
 **Solution**: Either by pressing `Ctrl + C` or programmatically like in this example:
