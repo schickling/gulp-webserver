@@ -85,7 +85,7 @@ gulp.task('webserver', function() {
 });
 ```
 #### How can i decrease the polling interval for livereload?
-**Solution**: The default interval is set to 5007ms. To override, set `enable:true` and `pollingInterval` to desired interval in ms. e.g.:
+**Solution**: To override the default interval (5007ms), set `enable:true` and `pollingInterval` to desired interval in ms. e.g.:
 
 ```js
 gulp.task('webserver', function() {
