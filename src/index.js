@@ -53,7 +53,7 @@ module.exports = function(options) {
     livereload: {
       enable: false,
       port: 35729,
-      pollingInterval: 200,
+      pollingInterval: 5007,
       filter: function (filename) {
         if (filename.match(/node_modules/)) {
           return false;
