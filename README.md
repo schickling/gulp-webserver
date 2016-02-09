@@ -84,6 +84,22 @@ gulp.task('webserver', function() {
     }));
 });
 ```
+#### How can i decrease the polling interval for livereload?
+**Solution**: To override the default interval of 5007 ms, set `enable:true` and `pollingInterval` to desired interval. 
+
+For example:
+
+```js
+gulp.task('webserver', function() {
+  gulp.src('app')
+    .pipe(webserver({
+      livereload: {
+        enable: true, // need this set to true to enable livereload
+        pollingInterval: 200 // poll fs every 200ms
+      }
+    }));
+});
+```
 
 #### How can I kill the running server?
 
