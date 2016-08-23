@@ -1,6 +1,6 @@
 # gulp-webserver-io
 
-_The purpose of this extension is to enable `console.log` from the command line, this help when you test your webpage with a mobile device._
+*_The purpose of this extension is to enable `console.log` from the command line, this help when you test your webpage with a mobile device._*
 
 This is based on the [gulp-webserver](https://github.com/schickling/gulp-webserver)
 
@@ -32,11 +32,6 @@ Also on the initial run, you will received a message from the `console.log`
 Now whenever you have javascript error in your page, not only your console from your browser will see the error. Your command line console
 which run the gulp will also see the message as well.
 
-If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. As they are injected at the same time.
-
-The reason why you want to do this is to
-
-
 ### Configuration
 
 ```js
@@ -48,8 +43,23 @@ The reason why you want to do this is to
     }
 ```
 
+If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
 
-==============
+The reason why you want to do this may be because you want to fine-tune the console message. It will accept the following data type
+
+    default: String
+    or
+    Object {
+        from: String // if you don't pass color this will only use to check what color should use, debug --> red , info --> blue , warning --> yellow
+        color: String // <-- color method from [colors](https://www.npmjs.com/package/colors)
+        msg: String // <-- the error message
+    }
+
+Also you might want to integrate into your log method from your application.
+
+Note: A angular (1.x) version module will be available shortly.
+
+============== ORIGINAL README =================
 
 > Streaming gulp plugin to run a local webserver with LiveReload
 
