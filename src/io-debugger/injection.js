@@ -51,7 +51,7 @@
 
    function snip(body) {
      if (!body) return false;
-     return (~body.lastIndexOf("/" + config.ioDebugger.client));
+     return (~body.lastIndexOf("/" + opt.ioDebugger.client));
    }
 
    function snap(body) {
