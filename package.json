@@ -1,7 +1,7 @@
 {
   "name": "gulp-webserver-io",
-  "version": "0.10.0",
-  "description": "Gulp plugin to run a local webserver with LiveReload",
+  "version": "0.10.1",
+  "description": "Gulp plugin to run a local webserver with socket.io debugger",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha"
