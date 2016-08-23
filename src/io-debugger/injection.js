@@ -1,85 +1,98 @@
 /**
  * taking the idea from livereload and inject our socket.io and io-debugger-client file on the fly
  */
- module.exports = function(opt) {
+ module.exports = function(config , opt) {
    // options
    var opt = opt || {};
    var ignore = opt.ignore || opt.excludeList || [/\.js$/, /\.css$/, /\.svg$/, /\.ico$/, /\.woff$/, /\.png$/, /\.jpg$/, /\.jpeg$/];
    var include = opt.include || [/.*/];
    var html = opt.html || _html;
    var rules = opt.rules || [{
-     match: /<\/body>(?![\s\S]*<\/body>)/i,
-     fn: prepend
+       match: /<\/body>(?![\s\S]*<\/body>)/i,
+       fn: prepend
    }, {
-     match: /<\/html>(?![\s\S]*<\/html>)/i,
-     fn: prepend
+       match: /<\/html>(?![\s\S]*<\/html>)/i,
+       fn: prepend
    }, {
-     match: /<\!DOCTYPE.+>/i,
-     fn: append
+       match: /<\!DOCTYPE.+>/i,
+       fn: append
    }];
+
+   ///////////////////////////////
+   //   modified for ioDebugger //
+   ///////////////////////////////
+
    var disableCompression = opt.disableCompression || false;
-   var hostname = opt.host;
-   var port = opt.port;
-   var snippet = '<script src="/socket.io/socket.io.js"></script><script src="' + opt.ioDebugger.path + '/' + opt.ioDebugger.client + '"></script>';
+
+   var debugger_snippet = '<script src="/socket.io/socket.io.js"></script>\n<script src="' + config.ioDebugger.path + '/' + config.ioDebugger.client + '"></script>\n';
+
+   if (config.livereload.enable) {
+       var hostname = opt.hostname || 'localhost';
+       var port = opt.port || 35729;
+       var src = opt.src || "//' + (location.hostname || '" + hostname + "') + ':" + port + "/livereload.js?snipver=1";
+       var snippet = "\n<script>//<![CDATA[\ndocument.write('<script src=\"" + src + "\"><\\/script>')\n//]]></script>\n" + debugger_snippet;
+   }
+   else {
+       var snippet = '\n' + debugger_snippet;
+   }
 
    // helper functions
    var regex = (function() {
-     var matches = rules.map(function(item) {
-       return item.match.source;
-     }).join('|');
-
-     return new RegExp(matches);
+       var matches = rules.map(function(item) {
+           return item.match.source;
+       }).join('|');
+       return new RegExp(matches);
    })();
 
    function prepend(w, s) {
-     return s + w;
+       return s + w;
    }
 
    function append(w, s) {
-     return w + s;
+       return w + s;
    }
 
    function _html(str) {
-     if (!str) return false;
-     return /<[:_-\w\s\!\/\=\"\']+>/i.test(str);
+       if (!str) return false;
+       return /<[:_-\w\s\!\/\=\"\']+>/i.test(str);
    }
 
    function exists(body) {
-     if (!body) return false;
-     return regex.test(body);
+       if (!body) return false;
+       return regex.test(body);
    }
 
    function snip(body) {
-     if (!body) return false;
-     return (~body.lastIndexOf("/" + opt.ioDebugger.client));
+       if (!body) return false;
+       return (~body.lastIndexOf("/" + config.ioDebugger.client));
    }
 
    function snap(body) {
-     var _body = body;
-     rules.some(function(rule) {
-       if (rule.match.test(body)) {
-         _body = body.replace(rule.match, function(w) {
-           return rule.fn(w, snippet);
-         });
-         return true;
-       }
-       return false;
-     });
-     return _body;
+       var _body = body;
+       rules.some(function(rule) {
+           if (rule.match.test(body)) {
+               _body = body.replace(rule.match, function(w) {
+                   return rule.fn(w, snippet);
+               });
+               return true;
+           }
+           return false;
+       });
+       return _body;
    }
 
    function accept(req) {
-     var ha = req.headers["accept"];
-     if (!ha) return false;
-     return (~ha.indexOf("html"));
+       var ha = req.headers["accept"];
+       if (!ha) return false;
+       return (~ha.indexOf("html"));
    }
 
    function check(str, arr) {
-    if (!str) return true;
-     return arr.some(function(item) {
-       if ( (item.test && item.test(str) ) || ~str.indexOf(item)) return true;
-       return false;
-     });
+       if (!str) return true;
+       return arr.some(function(item) {
+           if ( (item.test && item.test(str) ) || ~str.indexOf(item)) return true;
+           return false;
+       });
    }
 
    // middleware

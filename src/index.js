@@ -17,6 +17,7 @@ var extend = require('node.extend');
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 var isarray = require('isarray');
 
+var createIoDebuggerClient , ioDebuggerInjection;
 
 module.exports = function(options) {
 
@@ -51,13 +52,15 @@ module.exports = function(options) {
 
     // Middleware: Livereload
     livereload: {
-      enable: false,
-      port: 35729,
-      filter: function (filename) {
-        if (filename.match(/node_modules/)) {
-          return false;
-        } else { return true; }
-      }
+        enable: false,
+        port: 35729,
+        filter: function (filename) {
+            if (filename.match(/node_modules/)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     },
 
     // Middleware: Directory listing
@@ -90,6 +93,13 @@ module.exports = function(options) {
       'livereload',
       'ioDebugger'
   ]);
+  // make sure the namespace is correct first
+  if (config.ioDebugger.enable) {
+      var namespace = config.ioDebugger.path;
+      if (namespace.substr(0,1)!=='/') {
+          config.ioDebugger.path = '/' + namespace;
+      }
+  }
 
   if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
     // ensure leading slash if this is NOT a complete url form
@@ -111,59 +121,51 @@ module.exports = function(options) {
   var lrServer;
 
   if (config.livereload.enable) {
-
-    app.use(connectLivereload({
-      port: config.livereload.port
-    }));
-
-    if (config.https) {
-      if (config.https.pfx) {
-        lrServer = tinyLr({
-          pfx: fs.readFileSync(config.https.pfx),
-          passphrase: config.https.passphrase
-        });
+      // here already inject the live reload stuff so we need to figure out a different way to rewrite it
+      if (config.ioDebugger.enable && config.ioDebugger.client) {
+          ioDebuggerInjection = require('./io-debugger/injection.js');
+          app.use(
+              ioDebuggerInjection(config , {
+                  port: config.livereload.port
+              })
+          );
       }
       else {
-        lrServer = tinyLr({
-          key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
-          cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
-        });
+          app.use(connectLivereload({
+              port: config.livereload.port
+          }));
       }
-    } else {
-      lrServer = tinyLr();
-    }
 
-    lrServer.listen(config.livereload.port, config.host);
+      if (config.https) {
+          if (config.https.pfx) {
+              lrServer = tinyLr({
+                  pfx: fs.readFileSync(config.https.pfx),
+                  passphrase: config.https.passphrase
+              });
+          }
+          else {
+              lrServer = tinyLr({
+                  key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+                  cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+              });
+          }
+      }
+      else {
+          lrServer = tinyLr();
+      }
 
+      lrServer.listen(config.livereload.port, config.host);
   }
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
-  if (config.ioDebugger.enable) {
-
-      // double check if some silly config pass to this
-      var namespace = config.ioDebugger.path;
-      if (namespace.substr(0,1)!=='/') {
-          config.ioDebugger.path = '/' + namespace;
-      }
-      if (config.ioDebugger.client) { // if they pass a false or not true value to this option 
-            /**
-             * a middleware to create the client
-             */
-            var createIoDebuggerClient = require('./io-debugger/middleware.js');
-            var ioDebuggerInjection = require('./io-debugger/injection.js');
-            /**
-             * injecting our middleware
-             */
-            if (typeof config.middleware === 'function') {
-                config.middleware = [config.middleware];
-            }
-            else if (!isarray(config.middleware)) {
-                // console.log('ERROR: how come the middleware is not array or function?');
-                config.middleware = [];
-            }
-            // pushing them in
-            config.middleware.push(createIoDebuggerClient(config));
-            config.middleware.push(ioDebuggerInjection(config));
-        }
+  if (config.ioDebugger.enable && config.ioDebugger.client) {
+        /**
+         * a middleware to create the client
+         */
+        createIoDebuggerClient = require('./io-debugger/middleware.js');
+        // pushing them in connect app middleware
+        app.use(
+            createIoDebuggerClient(config)
+        );
   }
 
   // middlewares
