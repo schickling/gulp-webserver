@@ -72,15 +72,23 @@ module.exports = function(options) {
     // Middleware: Proxy
     // For possible options, see:
     //  https://github.com/andrewrk/connect-proxy
-    proxies: []
-
+    proxies: [],
+    // create our socket.io debugger
+    // using the socket.io instead of just normal post allow us to do this cross domain
+    ioDebugger: {
+        enable: true,
+        path: '/iodebugger',
+        client: 'iodebugger-client.js',
+        options: {} // not in use
+    }
   };
 
   // Deep extend user provided options over the all of the defaults
   // Allow shorthand syntax, using the enable property as a flag
   var config = enableMiddlewareShorthand(defaults, options, [
-    'directoryListing',
-    'livereload'
+      'directoryListing',
+      'livereload',
+      'ioDebugger'
   ]);
 
   if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
@@ -128,29 +136,50 @@ module.exports = function(options) {
     lrServer.listen(config.livereload.port, config.host);
 
   }
+  // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
+  if (config.ioDebugger.enable) {
+        /**
+         * a middleware to create the client
+         */
+        var createIoDebuggerClient = require('./io-debugger/middleware.js');
+        var ioDebuggerInjection = require('./io-debugger/injection.js');
+        /**
+         * injecting our middleware
+         */
+        if (typeof config.middleware === 'function') {
+            config.middleware = [config.middleware];
+        }
+        else if (!isarray(config.middleware)) {
+            console.log('ERROR: how come the middleware is not array or function?');
+            config.middleware = [];
+        }
+        // pushing them in
+        config.middleware.push(createIoDebuggerClient(config));
+        config.middleware.push(ioDebuggerInjection(config));
+  }
 
   // middlewares
   if (typeof config.middleware === 'function') {
-    app.use(config.middleware);
+      app.use(config.middleware);
   } else if (isarray(config.middleware)) {
-    config.middleware
-      .filter(function(m) { return typeof m === 'function'; })
-      .forEach(function(m) {
-        app.use(m);
-      });
+      config.middleware
+            .filter(function(m) { return typeof m === 'function'; })
+            .forEach(function(m) {
+                app.use(m);
+            });
   }
 
   // Proxy requests
   for (var i = 0, len = config.proxies.length; i < len; i++) {
-    var proxyoptions = url.parse(config.proxies[i].target);
-    if (config.proxies[i].hasOwnProperty('options')) {
-      extend(proxyoptions, config.proxies[i].options);
-    }
-    app.use(config.proxies[i].source, proxy(proxyoptions));
+      var proxyoptions = url.parse(config.proxies[i].target);
+      if (config.proxies[i].hasOwnProperty('options')) {
+          extend(proxyoptions, config.proxies[i].options);
+      }
+      app.use(config.proxies[i].source, proxy(proxyoptions));
   }
 
   if (config.directoryListing.enable) {
-    app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
+      app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
 
 
@@ -213,6 +242,11 @@ module.exports = function(options) {
     webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
   } else {
     webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
+  }
+
+  // init our socket.io
+  if (config.ioDebugger.enable) {
+      var ioDebugger = require('./io-debugger/server.js')(config , webserver);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
