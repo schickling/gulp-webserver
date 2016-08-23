@@ -29,8 +29,13 @@ Also on the initial run, you will received a message from the `console.log`
 
     debugger init connection:  IO DEBUGGER is listening ...
 
-Now whenever you have javascript error in your page, not only your console from your browser will see the error. Your commnad line console
+Now whenever you have javascript error in your page, not only your console from your browser will see the error. Your command line console
 which run the gulp will also see the message as well.
+
+If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. As they are injected at the same time.
+
+The reason why you want to do this is to
+
 
 ### Configuration
 

@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/schickling/gulp-webserver.git"
+    "url": "https://github.com/joelchu/gulp-webserver-io.git"
   },
   "keywords": [
     "gulpplugin",
@@ -16,12 +16,12 @@
     "connect",
     "livereload"
   ],
-  "author": "Johannes Schickling <schickling.j@gmail.com> (https://github.com/schickling)",
+  "author": "Joel Chu <joelckchu@gmail.com> (https://github.com/joelchu)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/schickling/gulp-webserver/issues"
+    "url": "https://github.com/joelchu/gulp-webserver-io/issues"
   },
-  "homepage": "https://github.com/schickling/gulp-webserver",
+  "homepage": "https://github.com/joelchu/gulp-webserver-io",
   "devDependencies": {
     "mocha": "^1.20.1",
     "supertest": "^0.13.0"
