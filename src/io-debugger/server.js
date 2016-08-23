@@ -40,7 +40,11 @@ module.exports = function(config , server)
         socket.emit('hello', 'IO DEBUGGER is listening ...');
         // @TODO the data will be an object of {from: String, msg: String}
         // create some fancy output with it
+        var time = new Date().getUTCDate();
         socket.on('event', function (data) {
+            console.log(
+                colors.cyan(time + ' debugger msg')
+            );
             if (typeof data === 'string') {
                 console.log(
                     colors.yellow(data)

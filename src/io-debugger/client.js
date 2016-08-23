@@ -13,7 +13,7 @@
         if (stack) {
             message += '\n' + stack;
         }
-        debug.emit('event' , {from: '' , msg: message});
+        debug.emit('event' , message);
     });
 
 })();

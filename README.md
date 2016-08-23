@@ -1,4 +1,49 @@
-gulp-webserver [![Build Status](http://img.shields.io/travis/schickling/gulp-webserver.svg?style=flat)](https://travis-ci.org/schickling/gulp-webserver) [![](http://img.shields.io/npm/dm/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver) [![](http://img.shields.io/npm/v/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver)
+# gulp-webserver-io
+
+_The purpose of this extension is to enable `console.log` from the command line, this help when you test your webpage with a mobile device._
+
+This is based on the [gulp-webserver](https://github.com/schickling/gulp-webserver)
+
+The addition is a socket.io based debugger inspired by [this article](https://www.sitepoint.com/proper-error-handling-javascript/) from [sitepoint](https://www.sitepoint.com)
+
+All the original `gulp-webserver` configuration is the same. To configure the new socket.io debugger:
+
+    var gulp = require('gulp');
+    var webserver = require('gulp-webserver-io');
+
+    gulp.task('webserver' , function()
+    {
+        return gulp.src('app')
+                   .pipe(webserver({
+                       livereload: false,
+                       directoryListing: false,
+                       open: true,
+                       ioDebugger: true // enable the ioDebugger  
+                   });
+
+    });
+
+Once you run your gulp task. Your browser will find two extra files injected 1. The `socket.io.js` 2. `io-debugger-client.js`
+
+Also on the initial run, you will received a message from the `console.log`
+
+    debugger init connection:  IO DEBUGGER is listening ...
+
+Now whenever you have javascript error in your page, not only your console from your browser will see the error. Your commnad line console
+which run the gulp will also see the message as well.
+
+### Configuration
+
+```js
+    ioDebugger: {
+        enable: true,
+        path: '/iodebugger', // the namespace for the socket.io REQUIRED
+        client: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
+        log: false // @TODO not implement yet. But it will log to a file using the timestamp
+    }
+```
+
+
 ==============
 
 > Streaming gulp plugin to run a local webserver with LiveReload

@@ -76,10 +76,10 @@ module.exports = function(options) {
     // create our socket.io debugger
     // using the socket.io instead of just normal post allow us to do this cross domain
     ioDebugger: {
-        enable: true,
+        enable: false,
         path: '/iodebugger',
         client: 'iodebugger-client.js',
-        options: {} // not in use
+        log: false // not in use
     }
   };
 
@@ -138,24 +138,32 @@ module.exports = function(options) {
   }
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
   if (config.ioDebugger.enable) {
-        /**
-         * a middleware to create the client
-         */
-        var createIoDebuggerClient = require('./io-debugger/middleware.js');
-        var ioDebuggerInjection = require('./io-debugger/injection.js');
-        /**
-         * injecting our middleware
-         */
-        if (typeof config.middleware === 'function') {
-            config.middleware = [config.middleware];
+
+      // double check if some silly config pass to this
+      var namespace = config.ioDebugger.path;
+      if (namespace.substr(0,1)!=='/') {
+          config.ioDebugger.path = '/' + namespace;
+      }
+      if (config.ioDebugger.client) { // if they pass a false or not true value to this option 
+            /**
+             * a middleware to create the client
+             */
+            var createIoDebuggerClient = require('./io-debugger/middleware.js');
+            var ioDebuggerInjection = require('./io-debugger/injection.js');
+            /**
+             * injecting our middleware
+             */
+            if (typeof config.middleware === 'function') {
+                config.middleware = [config.middleware];
+            }
+            else if (!isarray(config.middleware)) {
+                // console.log('ERROR: how come the middleware is not array or function?');
+                config.middleware = [];
+            }
+            // pushing them in
+            config.middleware.push(createIoDebuggerClient(config));
+            config.middleware.push(ioDebuggerInjection(config));
         }
-        else if (!isarray(config.middleware)) {
-            console.log('ERROR: how come the middleware is not array or function?');
-            config.middleware = [];
-        }
-        // pushing them in
-        config.middleware.push(createIoDebuggerClient(config));
-        config.middleware.push(ioDebuggerInjection(config));
   }
 
   // middlewares

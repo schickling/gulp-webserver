@@ -20,13 +20,7 @@
    var disableCompression = opt.disableCompression || false;
    var hostname = opt.host;
    var port = opt.port;
-
-   /*
-   var src = opt.src || "//' + (location.hostname || '" + hostname + "') + ':" + port + opt.ioDebugger.path + "/" + opt.ioDebugger.client;
-   var snippet = "\n<script>//<![CDATA[\ndocument.write('<script src=\"/socket.io/socket.io.js\"><\\/script><script src=\"" + src + "\"><\\/script>')\n//]]></script>\n";
-   */
-
-   var snipper = '<script src="/socket.io/socket.io.js"></script><script src="' + opt.ioDebugger.path + '/' + opt.ioDebugger.client + '"></script>';
+   var snippet = '<script src="/socket.io/socket.io.js"></script><script src="' + opt.ioDebugger.path + '/' + opt.ioDebugger.client + '"></script>';
 
    // helper functions
    var regex = (function() {
