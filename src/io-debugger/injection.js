@@ -87,7 +87,7 @@
    function snap(body) {
        var _body = body;
 	   
-	  	console.log('rules' , rules);
+	  	// console.log('rules' , rules);
 	   
        rules.some(function(rule) {
            if (rule.match.test(body)) {
