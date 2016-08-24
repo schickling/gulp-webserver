@@ -37,7 +37,7 @@ which run the gulp will also see the message as well.
 ```js
     ioDebugger: {
         enable: true,
-        path: '/iodebugger', // the namespace for the socket.io REQUIRED
+        namespace: '/iodebugger', // the namespace for the socket.io REQUIRED
         js: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
         client: {}, // see below 
 		server: {}, // see below 
