@@ -28,7 +28,7 @@ var getColor = function(data)
 };
 
 /**
- * main 
+ * main
  */
 module.exports = function(config , server)
 {
@@ -36,7 +36,7 @@ module.exports = function(config , server)
 	var keys = ['browser' , 'location'];
     // run
     var namespace = io.of(config.ioDebugger.namespace);
-	
+
     namespace.on('connection', function (socket)
     {
         // announce to the client that is working
@@ -54,10 +54,8 @@ module.exports = function(config , server)
                     colors.yellow(data)
                 );
             }
-            else if (data.toString()==='[object Object]') { // this is required so we just do a simple test here 
-                	
+            else if (data.toString()==='[object Object]') { // this is required so we just do a simple test here
 				// console.log('check typeof ' + data.toString());
-				
 				var color = getColor(data);
                 if (data.from && data.color) {
                     console.log('from: ' , data.from);
@@ -70,10 +68,24 @@ module.exports = function(config , server)
 						);
 					}
 				});
-                console.log(colors.yellow('message:' ) + colors[color](data.msg));
+                if (typeof data.msg === 'string') {
+                    console.log(
+                        colors.yellow('message:' ) + colors[color](data.msg)
+                    );
+                }
+                else { // this is to accomdate the integration with other logging system sending back different messages
+                    console.log(
+                        colors.yellow('message:')
+                    );
+                    console.log(
+                        colors[color](
+                            util.inspect(data.msg , false, null)
+                        )
+                    );
+                }
             }
-			else {
-				// dump the content out 
+			else { // unknown
+				// dump the content out
 				console.log(
 					colors.cyan('UNKNOWN ERROR TYPE')
 				);
