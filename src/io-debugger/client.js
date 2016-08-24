@@ -1,4 +1,4 @@
-(function(window)
+(function(window , navigator)
 {
 	/**
 	 * create a global $gulpWebserverIo to hold this connection  
@@ -6,7 +6,11 @@
     window.$gulpWebserverIo = io.connect('http://{host}:{port}{debuggerPath}');
 
     window.$gulpWebserverIo.on('hello', function (msg) {
-        console.log('debugger init connection: ' , msg);
+		try {
+        	console.log('debugger init connection: ' , msg);
+		} catch (e) {
+			// no console.log 
+		}
     });
 
     // core implementation
@@ -18,7 +22,11 @@
             message += '\n' + stack;
         }
 		
-        window.$gulpWebserverIo.emit('gulpWebserverIoError' , message);
+        window.$gulpWebserverIo.emit('gulpWebserverIoError' , {
+			browser: navigator.userAgent,
+			msg: message,
+			location: window.location.href
+        });
     });
 
-})(window);
+})(window , navigator);

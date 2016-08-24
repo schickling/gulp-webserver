@@ -7,6 +7,7 @@
    var ignore = opt.ignore || opt.excludeList || [/\.js$/, /\.css$/, /\.svg$/, /\.ico$/, /\.woff$/, /\.png$/, /\.jpg$/, /\.jpeg$/];
    var include = opt.include || [/.*/];
    var html = opt.html || _html;
+   // this is the important part to determine how the script get inserted into the page 
    var rules = opt.rules || [{
        match: /<\/body>(?![\s\S]*<\/body>)/i,
        fn: prepend
@@ -26,6 +27,10 @@
 
    var debugger_snippet = '<script src="/socket.io/socket.io.js"></script>\n<script src="' + config.ioDebugger.path + '/' + config.ioDebugger.client + '"></script>\n';
 
+   /**
+    * when the livereload enable we need to inject their script 
+	* @TODO we need to sepearate this two process 
+	*/
    if (config.livereload.enable) {
        var hostname = opt.hostname || 'localhost';
        var port = opt.port || 35729;
@@ -62,9 +67,10 @@
        return regex.test(body);
    }
 
-   function snip(body) {
+   function snip(body , strToCheck) {
        if (!body) return false;
-       return (~body.lastIndexOf("/" + config.ioDebugger.client));
+	   strToCheck = strToCheck || config.ioDebugger.path + "/" + config.ioDebugger.client; 
+       return (~body.lastIndexOf(strToCheck));
    }
 
    function snap(body) {
@@ -132,15 +138,15 @@
 				var body = string instanceof Buffer ? string.toString(encoding) : string;
 				
          		if (exists(body) && !snip(res.data)) {
-           			console.log('pass 1');
+           			
 					res.push(snap(body));
            			return true;
          		} else if (html(body) || html(res.data)) {
-					console.log('pass 2');
+					
            			res.push(body);
            			return true;
          		} else {
-					console.log('pass 3');
+					
            			restore();
            			return write.call(res, string, encoding);
          		}

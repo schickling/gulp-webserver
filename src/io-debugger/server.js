@@ -3,6 +3,7 @@
  */
 var io = require('socket.io');
 var colors = require('colors');
+var util = require('util');
 
 var getColor = function(data)
 {
@@ -32,6 +33,7 @@ var getColor = function(data)
 module.exports = function(config , server)
 {
     var io = require('socket.io')(server);
+	var keys = ['browser' , 'location'];
     // run
     io.of(config.ioDebugger.path)
     .on('connection', function (socket)
@@ -41,22 +43,45 @@ module.exports = function(config , server)
         // @TODO the data will be an object of {from: String, msg: String}
         // create some fancy output with it
         var time = new Date().toString();
+		// listen
         socket.on('gulpWebserverIoError', function (data) {
             console.log(
-                colors.cyan('io debugger msg @ ' + time)
+                colors.yellow('io debugger msg @ ' + time)
             );
             if (typeof data === 'string') {
                 console.log(
                     colors.yellow(data)
                 );
             }
-            else {
-                var color = getColor(data);
+            else if (data.toString()==='[object Object]') { // this is required so we just do a simple test here 
+                	
+				// console.log('check typeof ' + data.toString());
+				
+				var color = getColor(data);
                 if (data.from && data.color) {
                     console.log('from: ' , data.from);
                 }
-                console.log(colors[color](data.msg));
+				keys.map(function(key)
+				{
+					if (data[key]) {
+						console.log(
+							colors.yellow(key + ':' ) +  colors.cyan(data[key])
+						);
+					}
+				});
+                console.log(colors.yellow('message:' ) + colors[color](data.msg));
             }
+			else {
+				// dump the content out 
+				console.log(
+					colors.cyan('UNKNOWN ERROR TYPE')
+				);
+				console.log(
+					colors.red(
+						util.inspect(data, false, null)
+					)
+				);
+			}
         });
     });
 

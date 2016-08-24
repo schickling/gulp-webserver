@@ -1,6 +1,6 @@
 # gulp-webserver-io
 
-*_The purpose of this extension is to enable `console.log` from the command line, this help when you test your webpage with a mobile device._*
+*_The purpose of this extension is to enable `console.log` message to show in the command line (console , terminal whatever), this help when you test your webpage with a mobile device._*
 
 This is based on the [gulp-webserver](https://github.com/schickling/gulp-webserver)
 
@@ -52,12 +52,14 @@ The reason why you want to do this may be because you want to fine-tune the cons
     Object {
         from: String // if you don't pass color this will only use to check what color should use, debug --> red , info --> blue , warning --> yellow
         color: String // <-- color method from [colors](https://www.npmjs.com/package/colors)
-        msg: String // <-- the error message
+        msg: String // <-- the error message,
+		browser: String // the navigator.userAgent 
+		location: String // the window.location.href 
     }
 
 Also you might want to integrate into your log method from your application.
 
-Note: A angular (1.x) version module will be available shortly.
+Note: An angular (1.x) version module will be available shortly.
 
 ============== ORIGINAL README =================
 
