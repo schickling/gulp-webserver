@@ -14,11 +14,17 @@ var path = require('path');
 var open = require('open');
 var url = require('url');
 var extend = require('node.extend');
-var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 var isarray = require('isarray');
+// gulp-webserver script
+var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
+// ioDebugger scripts
+var ioDebuggerInjection = require('./io-debugger/injection.js');
+var ioDebuggerServer = require('./io-debugger/server.js');
+var ioDebuggerClient = require('./io-debugger/middleware.js');
 
-var createIoDebuggerClient , ioDebuggerInjection;
-
+/**
+ * main 
+ */
 module.exports = function(options) {
 
   var defaults = {
@@ -80,9 +86,12 @@ module.exports = function(options) {
     // using the socket.io instead of just normal post allow us to do this cross domain
     ioDebugger: {
         enable: false,
-        path: '/iodebugger',
-        client: 'iodebugger-client.js',
-        log: false // not in use
+        namespace: '/iodebugger',
+		js: 'iodebugger-client.js',
+		eventName: 'gulpWebserverIoError',
+        client: {}, // allow passing a configuration to overwrite the client 
+		server: {}, // allow passing configuration - see middleware.js for more detail 
+        log: false // not in use @TODO accept String or Function 
     }
   };
 
@@ -95,9 +104,11 @@ module.exports = function(options) {
   ]);
   // make sure the namespace is correct first
   if (config.ioDebugger.enable) {
-      var namespace = config.ioDebugger.path;
-      if (namespace.substr(0,1)!=='/') {
-          config.ioDebugger.path = '/' + namespace;
+      var namespace = config.ioDebugger.namespace;
+	  if (!namespace) {
+		  config.ioDebugger.namespace =  '/iodebugger';
+	  } else if (namespace.substr(0,1)!=='/') {
+          config.ioDebugger.namespace = '/' + namespace;
       }
   }
 
@@ -109,11 +120,11 @@ module.exports = function(options) {
   var app = connect();
 
   var openInBrowser = function() {
-    if (config.open === false) return;
+  	if (config.open === false) return;
     if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
-      // if this is a complete url form
-      open(config.open);
-      return;
+      	// if this is a complete url form
+      	open(config.open);
+      	return;
     }
     open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
   };
@@ -122,8 +133,7 @@ module.exports = function(options) {
 
   if (config.livereload.enable) {
       // here already inject the live reload stuff so we need to figure out a different way to rewrite it
-      if (config.ioDebugger.enable && config.ioDebugger.client) {
-          ioDebuggerInjection = require('./io-debugger/injection.js');
+      if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
           app.use(
               ioDebuggerInjection(config , {
                   port: config.livereload.port
@@ -157,14 +167,12 @@ module.exports = function(options) {
       lrServer.listen(config.livereload.port, config.host);
   }
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
-  if (config.ioDebugger.enable && config.ioDebugger.client) {
+  if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
         /**
-         * a middleware to create the client
+         * a middleware to create the client, pushing them in connect app middleware
          */
-        createIoDebuggerClient = require('./io-debugger/middleware.js');
-        // pushing them in connect app middleware
         app.use(
-            createIoDebuggerClient(config)
+            ioDebuggerClient(config)
         );
   }
 
@@ -198,39 +206,37 @@ module.exports = function(options) {
   // Create server
   var stream = through.obj(function(file, enc, callback) {
 
-    app.use(config.path, serveStatic(file.path));
+  		app.use(config.path, serveStatic(file.path));
 
-    if (config.livereload.enable) {
-      var watchOptions = {
-        ignoreDotFiles: true,
-        filter: config.livereload.filter
-      };
-      watch.watchTree(file.path, watchOptions, function (filename) {
-        lrServer.changed({
-          body: {
-            files: filename
-          }
-        });
-
-      });
-    }
-
-    this.push(file);
-    callback();
+    	if (config.livereload.enable) {
+      		var watchOptions = {
+        		ignoreDotFiles: true,
+        		filter: config.livereload.filter
+      		};
+      		watch.watchTree(file.path, watchOptions, function (filename) {
+        		lrServer.changed({
+          			body: {
+            			files: filename
+          			}
+        		});
+      		});
+    	}
+    	this.push(file);
+    	callback();
   })
   .on('data', function(f){files.push(f);})
   .on('end', function(){
-    if (config.fallback) {
-      files.forEach(function(file){
-        var fallbackFile = file.path + '/' + config.fallback;
-        if (fs.existsSync(fallbackFile)) {
-          app.use(function(req, res) {
-            res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-            fs.createReadStream(fallbackFile).pipe(res);
-          });
-        }
-      });
-    }
+  		if (config.fallback) {
+      		files.forEach(function(file){
+        		var fallbackFile = file.path + '/' + config.fallback;
+        		if (fs.existsSync(fallbackFile)) {
+          			app.use(function(req, res) {
+            			res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+            			fs.createReadStream(fallbackFile).pipe(res);
+          			});
+       	 		}
+      		});
+    	}
   });
 
   var webserver;
@@ -249,14 +255,14 @@ module.exports = function(options) {
         cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
       };
     }
-    webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
+    	webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
   } else {
-    webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
+    	webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
   }
 
-  // init our socket.io
-  if (config.ioDebugger.enable) {
-      var ioDebugger = require('./io-debugger/server.js')(config , webserver);
+  // init our socket.io server 
+  if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
+      var ioDebugger = ioDebuggerServer(config , webserver);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));

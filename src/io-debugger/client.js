@@ -22,9 +22,9 @@
             message += '\n' + stack;
         }
 		
-        window.$gulpWebserverIo.emit('gulpWebserverIoError' , {
-			browser: navigator.userAgent,
+        window.$gulpWebserverIo.emit('{eventName}' , {
 			msg: message,
+			browser: navigator.userAgent,
 			location: window.location.href
         });
     });

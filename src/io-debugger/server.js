@@ -28,15 +28,16 @@ var getColor = function(data)
 };
 
 /**
- * core implementation
+ * main 
  */
 module.exports = function(config , server)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
     // run
-    io.of(config.ioDebugger.path)
-    .on('connection', function (socket)
+    var namespace = io.of(config.ioDebugger.namespace);
+	
+    namespace.on('connection', function (socket)
     {
         // announce to the client that is working
         socket.emit('hello', 'IO DEBUGGER is listening ...');
@@ -44,7 +45,7 @@ module.exports = function(config , server)
         // create some fancy output with it
         var time = new Date().toString();
 		// listen
-        socket.on('gulpWebserverIoError', function (data) {
+        socket.on(config.ioDebugger.eventName, function (data) {
             console.log(
                 colors.yellow('io debugger msg @ ' + time)
             );

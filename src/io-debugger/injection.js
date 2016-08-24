@@ -10,22 +10,27 @@
    // this is the important part to determine how the script get inserted into the page 
    var rules = opt.rules || [{
        match: /<\/body>(?![\s\S]*<\/body>)/i,
-       fn: prepend
+       fn: prepend,
+	   v: 1
    }, {
        match: /<\/html>(?![\s\S]*<\/html>)/i,
-       fn: prepend
+       fn: prepend,
+	   v: 2
    }, {
        match: /<\!DOCTYPE.+>/i,
-       fn: append
+       fn: append,
+	   v: 3
    }];
 
    ///////////////////////////////
    //   modified for ioDebugger //
    ///////////////////////////////
 
+   var ioDebuggerJs = config.ioDebugger.namespace + '/' + config.ioDebugger.js;
+   
    var disableCompression = opt.disableCompression || false;
 
-   var debugger_snippet = '<script src="/socket.io/socket.io.js"></script>\n<script src="' + config.ioDebugger.path + '/' + config.ioDebugger.client + '"></script>\n';
+   var debugger_snippet = '<script src="/socket.io/socket.io.js"></script>\n<script src="' + ioDebuggerJs + '"></script>\n';
 
    /**
     * when the livereload enable we need to inject their script 
@@ -49,11 +54,13 @@
        return new RegExp(matches);
    })();
 
-   function prepend(w, s) {
+   function prepend(w, s , v) {
+	   console.log('v' , v);
        return s + w;
    }
 
-   function append(w, s) {
+   function append(w, s , v) {
+	   console.log('v' , v);
        return w + s;
    }
 
@@ -69,7 +76,7 @@
 
    function snip(body , strToCheck) {
        if (!body) return false;
-	   strToCheck = strToCheck || config.ioDebugger.path + "/" + config.ioDebugger.client; 
+	   strToCheck = strToCheck || ioDebuggerJs; 
        return (~body.lastIndexOf(strToCheck));
    }
 
@@ -78,7 +85,7 @@
        rules.some(function(rule) {
            if (rule.match.test(body)) {
                _body = body.replace(rule.match, function(w) {
-                   return rule.fn(w, snippet);
+                   return rule.fn(w, snippet , rule.v);
                });
                return true;
            }
@@ -104,8 +111,10 @@
    // middleware
    return function(req, res, next) {
       	// this code basically stop it from writing to the file twice 
-     	if (res._written) return next();
-     	res._written = true;
+     	// console.log('call res.__written');
+		if (res.__written) return next();
+     	res.__written = true;
+		// console.log('call res.__written again');
        
 
      	var writeHead = res.writeHead;

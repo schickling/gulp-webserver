@@ -38,10 +38,14 @@ which run the gulp will also see the message as well.
     ioDebugger: {
         enable: true,
         path: '/iodebugger', // the namespace for the socket.io REQUIRED
-        client: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
-        log: false // @TODO not implement yet. But it will log to a file using the timestamp
+        js: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
+        client: {}, // see below 
+		server: {}, // see below 
+		log: false // @TODO not implement yet. But it will log to a file using the timestamp
     }
 ```
+
+#####client 
 
 If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
 
@@ -60,6 +64,11 @@ The reason why you want to do this may be because you want to fine-tune the cons
 Also you might want to integrate into your log method from your application.
 
 Note: An angular (1.x) version module will be available shortly.
+
+####server 
+
+TBC 
+
 
 ============== ORIGINAL README =================
 
