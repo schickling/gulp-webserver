@@ -87,17 +87,19 @@ include the `/socket.io/socket.io.js` file from somewhere else.
 If you pass `server:false` then the server listener will not run. This has to work together with the client option above 
 
 
+## Install
+
+```sh
+$ npm install --save-dev gulp-webserver-io
+```
+
 ============== ORIGINAL README =================
 
 > Streaming gulp plugin to run a local webserver with LiveReload
 
 ##### Hint: This is a rewrite of [gulp-connect](https://github.com/AveVlad/gulp-connect/)
 
-## Install
 
-```sh
-$ npm install --save-dev gulp-webserver
-```
 
 ## Usage
 
