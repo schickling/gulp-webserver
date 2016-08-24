@@ -1,6 +1,6 @@
 {
   "name": "gulp-webserver-io",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "description": "Gulp plugin to run a local webserver with socket.io debugger",
   "main": "src/index.js",
   "scripts": {
