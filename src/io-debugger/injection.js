@@ -9,8 +9,13 @@
    var html = opt.html || _html;
    // this is the important part to determine how the script get inserted into the page 
    var rules = opt.rules || [{
+	   match: /<\/head>(?![\s\S]*<\/head>)/i,
+	   fn: prepend
+   }];
+   /*
+   ,{
        match: /<\/body>(?![\s\S]*<\/body>)/i,
-       fn: prepend,
+       fn: append, //prepend,
 	   v: 1
    }, {
        match: /<\/html>(?![\s\S]*<\/html>)/i,
@@ -20,7 +25,8 @@
        match: /<\!DOCTYPE.+>/i,
        fn: append,
 	   v: 3
-   }];
+	   }
+   */
 
    ///////////////////////////////
    //   modified for ioDebugger //
@@ -54,13 +60,11 @@
        return new RegExp(matches);
    })();
 
-   function prepend(w, s , v) {
-	   console.log('v' , v);
+   function prepend(w, s) {
        return s + w;
    }
 
-   function append(w, s , v) {
-	   console.log('v' , v);
+   function append(w, s) {
        return w + s;
    }
 
@@ -82,10 +86,14 @@
 
    function snap(body) {
        var _body = body;
+	   
+	  	console.log('rules' , rules);
+	   
        rules.some(function(rule) {
            if (rule.match.test(body)) {
                _body = body.replace(rule.match, function(w) {
-                   return rule.fn(w, snippet , rule.v);
+				   
+                   return rule.fn(w, snippet);
                });
                return true;
            }
@@ -116,7 +124,6 @@
      	res.__written = true;
 		// console.log('call res.__written again');
        
-
      	var writeHead = res.writeHead;
      	var write = res.write;
      	var end = res.end;
@@ -147,15 +154,15 @@
 				var body = string instanceof Buffer ? string.toString(encoding) : string;
 				
          		if (exists(body) && !snip(res.data)) {
-           			
+           			// console.log('first');
 					res.push(snap(body));
            			return true;
          		} else if (html(body) || html(res.data)) {
-					
+					// console.log('second');
            			res.push(body);
            			return true;
          		} else {
-					
+					// console.log('third');
            			restore();
            			return write.call(res, string, encoding);
          		}

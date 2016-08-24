@@ -22,11 +22,14 @@ var ioDebuggerInjection = require('./io-debugger/injection.js');
 var ioDebuggerServer = require('./io-debugger/server.js');
 var ioDebuggerClient = require('./io-debugger/middleware.js');
 
+var version = require('../package.json').version;
+
 /**
  * main 
  */
 module.exports = function(options) {
 
+	
   var defaults = {
 
     /**
@@ -120,13 +123,13 @@ module.exports = function(options) {
   var app = connect();
 
   var openInBrowser = function() {
-  	if (config.open === false) return;
-    if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
-      	// if this is a complete url form
-      	open(config.open);
-      	return;
-    }
-    open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
+  		if (config.open === false) return;
+    	if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
+      		// if this is a complete url form
+      		open(config.open);
+      		return;
+    	}
+    	open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
   };
 
   var lrServer;
@@ -242,19 +245,19 @@ module.exports = function(options) {
   var webserver;
 
   if (config.https) {
-    var opts;
+    	var opts;
 
-    if (config.https.pfx) {
-      opts = {
-        pfx: fs.readFileSync(config.https.pfx),
-        passphrase: config.https.passphrase
-      };
-    } else {
-      opts = {
-        key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
-        cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
-      };
-    }
+    	if (config.https.pfx) {
+      		opts = {
+        		pfx: fs.readFileSync(config.https.pfx),
+        		passphrase: config.https.passphrase
+      		};
+    	} else {
+      		opts = {
+        		key: fs.readFileSync(config.https.key || __dirname + '/../ssl/dev-key.pem'),
+        		cert: fs.readFileSync(config.https.cert || __dirname + '/../ssl/dev-cert.pem')
+      		};
+    	}
     	webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
   } else {
     	webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
@@ -262,18 +265,18 @@ module.exports = function(options) {
 
   // init our socket.io server 
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
-      var ioDebugger = ioDebuggerServer(config , webserver);
+      	var ioDebugger = ioDebuggerServer(config , webserver);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
 
   stream.on('kill', function() {
 
-    webserver.close();
+    	webserver.close();
 
-    if (config.livereload.enable) {
-      lrServer.close();
-    }
+    	if (config.livereload.enable) {
+      		lrServer.close();
+    	}
 
   });
 

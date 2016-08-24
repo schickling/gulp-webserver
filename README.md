@@ -45,7 +45,7 @@ which run the gulp will also see the message as well.
     }
 ```
 
-#####client 
+####client 
 
 If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
 
@@ -65,9 +65,26 @@ Also you might want to integrate into your log method from your application.
 
 Note: An angular (1.x) version module will be available shortly.
 
+You could fine tune how the client run as well
+
+```js 
+	ioDebugger: {
+		enable: true 	
+		client: {
+			host: 'anotherHostName',
+			port: 'anotherPortNumber'
+		},
+		server: false // see below 
+	}
+	
+```
+
+There might be situation where you just want to run your client code but point to a different server. Note that when you set it up like this, you MUST 
+include the `/socket.io/socket.io.js` file from somewhere else. 
+
 ####server 
 
-TBC 
+If you pass `server:false` then the server listener will not run. This has to work together with the client option above 
 
 
 ============== ORIGINAL README =================
