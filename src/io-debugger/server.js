@@ -41,7 +41,7 @@ module.exports = function(config , server)
         // @TODO the data will be an object of {from: String, msg: String}
         // create some fancy output with it
         var time = new Date().toString();
-        socket.on('event', function (data) {
+        socket.on('gulpWebserverIoError', function (data) {
             console.log(
                 colors.cyan('io debugger msg @ ' + time)
             );
