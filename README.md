@@ -63,7 +63,7 @@ The reason why you want to do this may be because you want to fine-tune the cons
 
 Also you might want to integrate into your log method from your application.
 
-Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-a-Angular-(1.X)-$log-that-log-message-to-the-server.).
+Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-an-Angular-(1.X)-$log-that-log-message-to-the-server.).
 
 You could fine tune how the client run as well
 
