@@ -4,6 +4,7 @@
 var fs = require('fs');
 var util = require('util');
 var path = require('path');
+var colors = require('colors');
 /**
  * main
  */
@@ -18,18 +19,19 @@ module.exports = function(data)
         'log'
     ].join('.');
 
+    var logFile = path.join(process.cwd() , 'logs' , fileName);
+
     fs.writeFile(
-        path.join(
-            '..' , '..' , 'logs' , fileName
-        ),
-        util.inspect(data , false , 2) ,
+        logFile,
+        util.inspect(data , false , 2),
         function(err) {
             if (err) {
                 console.log(
-                    'ERROR WRITING TO LOG FILE: ' + fileName
+                    colors.red(
+                        'ERROR WRITING TO LOG FILE: ' + logFile
+                    )
                 );
             }
         }
     );
-
 };
