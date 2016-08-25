@@ -39,13 +39,13 @@ which run the gulp will also see the message as well.
         enable: true,
         namespace: '/iodebugger', // the namespace for the socket.io REQUIRED
         js: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
-        client: {}, // see below 
-		server: {}, // see below 
+        client: {}, // see below
+		server: {}, // see below
 		log: false // @TODO not implement yet. But it will log to a file using the timestamp
     }
 ```
 
-####client 
+####client
 
 If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
 
@@ -57,34 +57,34 @@ The reason why you want to do this may be because you want to fine-tune the cons
         from: String // if you don't pass color this will only use to check what color should use, debug --> red , info --> blue , warning --> yellow
         color: String // <-- color method from [colors](https://www.npmjs.com/package/colors)
         msg: String // <-- the error message,
-		browser: String // the navigator.userAgent 
-		location: String // the window.location.href 
+		browser: String // the navigator.userAgent
+		location: String // the window.location.href
     }
 
 Also you might want to integrate into your log method from your application.
 
-Note: An angular (1.x) version module will be available shortly.
+Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-a-Angular-(1.X)-$log-that-log-message-to-the-server.).
 
 You could fine tune how the client run as well
 
-```js 
+```js
 	ioDebugger: {
 		enable: true 	
 		client: {
 			host: 'anotherHostName',
 			port: 'anotherPortNumber'
 		},
-		server: false // see below 
+		server: false // see below
 	}
-	
+
 ```
 
-There might be situation where you just want to run your client code but point to a different server. Note that when you set it up like this, you MUST 
-include the `/socket.io/socket.io.js` file from somewhere else. 
+There might be situation where you just want to run your client code but point to a different server. Note that when you set it up like this, you MUST
+include the `/socket.io/socket.io.js` file from somewhere else.
 
-####server 
+####server
 
-If you pass `server:false` then the server listener will not run. This has to work together with the client option above 
+If you pass `server:false` then the server listener will not run. This has to work together with the client option above
 
 
 ## Install
@@ -92,6 +92,11 @@ If you pass `server:false` then the server listener will not run. This has to wo
 ```sh
 $ npm install --save-dev gulp-webserver-io
 ```
+
+[JOEL CHU](http://joelchu.com) 2016
+
+SPONSORED BY [Halo Financial](https://www.halofinancial.com/)
+
 
 ============== ORIGINAL README =================
 

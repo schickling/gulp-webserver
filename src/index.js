@@ -25,11 +25,11 @@ var ioDebuggerClient = require('./io-debugger/middleware.js');
 var version = require('../package.json').version;
 
 /**
- * main 
+ * main
  */
 module.exports = function(options) {
 
-	
+
   var defaults = {
 
     /**
@@ -92,9 +92,9 @@ module.exports = function(options) {
         namespace: '/iodebugger',
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
-        client: {}, // allow passing a configuration to overwrite the client 
-		server: {}, // allow passing configuration - see middleware.js for more detail 
-        log: false // not in use @TODO accept String or Function 
+        client: {}, // allow passing a configuration to overwrite the client
+		server: {}, // allow passing configuration - see middleware.js for more detail
+        log: false // see wiki for more info
     }
   };
 
@@ -263,9 +263,20 @@ module.exports = function(options) {
     	webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
   }
 
-  // init our socket.io server 
+  // init our socket.io server
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
-      	var ioDebugger = ioDebuggerServer(config , webserver);
+	  var logger;
+	  if (config.ioDebugger.log !== false) {
+		  // if they pass a function (their own custom stuff)
+		  if (typeof config.ioDebugger.log === 'function') {
+			  logger = config.ioDebugger.log;
+		  }
+		  else {
+			  // our own
+			  logger = require('../io-debugger/logger.js');
+		  }
+	  }
+      var ioDebugger = ioDebuggerServer(config , webserver , logger);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));

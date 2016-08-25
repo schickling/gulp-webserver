@@ -38,20 +38,23 @@ module.exports = function(config , server , logger)
 	var keys = ['browser' , 'location'];
     // run
     var namespace = io.of(config.ioDebugger.namespace);
-
+    // start
     namespace.on('connection', function (socket)
     {
         // announce to the client that is working
         socket.emit('hello', 'IO DEBUGGER is listening ...');
-        // @TODO the data will be an object of {from: String, msg: String}
-        // create some fancy output with it
-        var time = new Date().toString();
 		// listen
-        socket.on(config.ioDebugger.eventName, function (data) {
-            // provide a logger 
+        socket.on(config.ioDebugger.eventName, function (data)
+        {
+            // provide a logger
             if (logger && typeof logger === 'function') {
-                return logger(data);
+                logger(data);
+                if (config.ioDebugger.log !== 'BOTH') {
+                    return;
+                }
             }
+            // console log output
+            var time = new Date().toString();
             // output to console
             console.log(
                 colors.yellow('io debugger msg @ ' + time)
@@ -104,5 +107,5 @@ module.exports = function(config , server , logger)
 			}
         });
     });
-
 };
+// EOF
