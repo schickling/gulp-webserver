@@ -171,6 +171,8 @@ module.exports = function(options) {
   }
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
   if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
+
+	  console.log(colors.yellow('ioDebugger client is running'));
         /**
          * a middleware to create the client, pushing them in connect app middleware
          */
@@ -265,6 +267,9 @@ module.exports = function(options) {
 
   // init our socket.io server
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
+
+	  console.log(colors.yellow('ioDebugger server is running'));
+
 	  var logger;
 	  if (config.ioDebugger.log !== false) {
 		  // if they pass a function (their own custom stuff)
@@ -273,7 +278,7 @@ module.exports = function(options) {
 		  }
 		  else {
 			  // our own
-			  logger = require('../io-debugger/logger.js');
+			  logger = require('./io-debugger/logger.js');
 		  }
 	  }
       var ioDebugger = ioDebuggerServer(config , webserver , logger);
