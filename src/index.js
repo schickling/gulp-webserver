@@ -15,6 +15,7 @@ var open = require('open');
 var url = require('url');
 var extend = require('node.extend');
 var isarray = require('isarray');
+var colors = require('colors');
 // gulp-webserver script
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');
 // ioDebugger scripts
