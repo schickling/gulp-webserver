@@ -8,16 +8,16 @@
         server: io.connect('http://{host}:{port}{debuggerPath}'),
         eventName: '{eventName}'
     };
-    // listen to connection
+    /**
+     * listen to the init connection
+     */
     window.$gulpWebserverIo.server.on('hello', function (msg)
     {
-		try {
-        	console.log('debugger init connection: ' , msg);
-		} catch (e) {
-			// no console.log
-		}
+        console.log('debugger init connection: ' , msg);
     });
-    // core implementation
+    /**
+     * core implementation
+     */
     window.addEventListener('error', function (e)
     {
 		var stack = e.error.stack;

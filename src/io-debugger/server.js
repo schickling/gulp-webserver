@@ -4,7 +4,9 @@
 var io = require('socket.io');
 var colors = require('colors');
 var util = require('util');
-
+/**
+ * just getting some color configuration
+ */
 var getColor = function(data)
 {
     var dc = 'cyan';
@@ -16,7 +18,7 @@ var getColor = function(data)
         case 'debug':
             return 'red';
         case 'info':
-            return 'blue';
+            return 'magenta';
         case 'warning':
             return 'yellow';
         default:
@@ -30,7 +32,7 @@ var getColor = function(data)
 /**
  * main
  */
-module.exports = function(config , server)
+module.exports = function(config , server , logger)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
@@ -46,6 +48,11 @@ module.exports = function(config , server)
         var time = new Date().toString();
 		// listen
         socket.on(config.ioDebugger.eventName, function (data) {
+            // provide a logger 
+            if (logger && typeof logger === 'function') {
+                return logger(data);
+            }
+            // output to console
             console.log(
                 colors.yellow('io debugger msg @ ' + time)
             );
@@ -79,7 +86,7 @@ module.exports = function(config , server)
                     );
                     console.log(
                         colors[color](
-                            util.inspect(data.msg , false, null)
+                            util.inspect(data.msg , false, 2)
                         )
                     );
                 }
@@ -91,7 +98,7 @@ module.exports = function(config , server)
 				);
 				console.log(
 					colors.red(
-						util.inspect(data, false, null)
+						util.inspect(data, false, 2)
 					)
 				);
 			}
