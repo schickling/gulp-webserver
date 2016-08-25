@@ -45,7 +45,7 @@ which run the gulp will also see the message as well.
     }
 ```
 
-####client
+### client
 
 If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
 
@@ -86,6 +86,9 @@ include the `/socket.io/socket.io.js` file from somewhere else.
 
 If you pass `server:false` then the server listener will not run. This has to work together with the client option above
 
+---
+
+Please check the [wiki](https://github.com/joelchu/gulp-webserver-io/wiki) for more configuration options.
 
 ## Install
 
@@ -97,6 +100,7 @@ $ npm install --save-dev gulp-webserver-io
 
 SPONSORED BY [Halo Financial](https://www.halofinancial.com/)
 
+---
 
 ============== ORIGINAL README =================
 
