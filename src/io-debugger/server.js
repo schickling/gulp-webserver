@@ -4,6 +4,7 @@
 var io = require('socket.io');
 var colors = require('colors');
 var util = require('util');
+var isarray = require('isarray');
 /**
  * just getting some color configuration
  */
@@ -39,7 +40,12 @@ module.exports = function(config , server , logger)
     // force the socket.io server to use websocket protocol only
     if (typeof config.ioDebugger.server === 'object') {
         if (config.ioDebugger.server.socketOnly) {
-            io.set('transport' , ['websocket']);
+            if (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig)) {
+                io.set('transport' , config.ioDebugger.server.transportConfig);
+            }
+            else {
+                io.set('transport' , ['websocket']);
+            }
         }
     }
     // run

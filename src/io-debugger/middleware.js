@@ -20,7 +20,10 @@ module.exports = function(config)
             {
                 if (err) {
                     res.writeHead(500);
-                    console.log('Error reading io-debugger-client file' , err);
+                    console.log(
+                        colors.red('Error reading io-debugger-client file') ,
+                        colors.yellow(err)
+                    );
                     return res.end('Just died!');
                 }
                 // search and replace
@@ -33,7 +36,12 @@ module.exports = function(config)
                 var connectionOptions = '';
                 if (typeof config.ioDebugger.server === 'object') {
                     if (config.ioDebugger.server.socketOnly) {
-                        connecitonOptions = "{'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transport': ['websocket']}";
+                        if (config.ioDebugger.server.clientConnectionOptions && typeof config.ioDebugger.server.clientConnectionOptions === 'object') {
+                            connnectionOptions = ", " + JSON.stringify(config.ioDebugger.server.clientConnectionOptions);
+                        }
+                        else {
+                            connecitonOptions = ", {'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transport': ['websocket']}";
+                        }
                     }
                 }
                 serveData = serveData.replace('{connectionOptions}' , connectionOptions);
