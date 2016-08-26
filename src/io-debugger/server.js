@@ -38,6 +38,10 @@ module.exports = function(config , server , logger)
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
     // force the socket.io server to use websocket protocol only
+    /*
+
+    There is a problem with this setting that cause the whole thing stop working!
+    */
     if (typeof config.ioDebugger.server === 'object') {
         if (config.ioDebugger.server.socketOnly) {
             if (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig)) {
@@ -48,6 +52,8 @@ module.exports = function(config , server , logger)
             }
         }
     }
+    
+    console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running'));
     // run
     var namespace = io.of(config.ioDebugger.namespace);
     // start

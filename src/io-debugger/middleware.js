@@ -1,4 +1,5 @@
 var fs = require('fs');
+var colors = require('colors');
 /**
  * middleware to serve up the client file
  */
@@ -21,19 +22,26 @@ module.exports = function(config)
                 if (err) {
                     res.writeHead(500);
                     console.log(
-                        colors.red('Error reading io-debugger-client file') ,
+                        colors.red('Error reading io-debugger-client file'),
                         colors.yellow(err)
                     );
                     return res.end('Just died!');
                 }
+                // if they want to ping the server back on init
+                var ping = (typeof opts.client === 'object' && opts.client.ping) ? 'true' : 'false';
                 // search and replace
                 var serveData = data.toString().replace('{host}' , debuggerHost)
 											   .replace('{port}' , debuggerPort)
 											   .replace('{debuggerPath}' , debuggerPath)
-											   .replace('{eventName}' , debuggerEventName);
+											   .replace('{eventName}' , debuggerEventName)
+                                               .replace('{ping}' , ping);
                 // force websocket connection
                 // see: http://stackoverflow.com/questions/8970880/cross-domain-connection-in-socket-io
                 var connectionOptions = '';
+                /*
+
+                Have to disabled this feature, there is a problem with the setting that cause the client not running WTF!
+                */
                 if (typeof config.ioDebugger.server === 'object') {
                     if (config.ioDebugger.server.socketOnly) {
                         if (config.ioDebugger.server.clientConnectionOptions && typeof config.ioDebugger.server.clientConnectionOptions === 'object') {
@@ -44,8 +52,10 @@ module.exports = function(config)
                         }
                     }
                 }
+
                 serveData = serveData.replace('{connectionOptions}' , connectionOptions);
 
+                console.log(colors.white('[ioDebugger] ') + colors.yellow('client is running'));
                 // console.log('serving up the client.js' , serveData);
                 res.writeHead(200);
                 res.end(serveData);

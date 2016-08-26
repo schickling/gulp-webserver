@@ -8,13 +8,29 @@
         server: io.connect('http://{host}:{port}{debuggerPath}'{connectionOptions}),
         eventName: '{eventName}'
     };
+
+    var ping = {ping};
+
+    var send = function(payload)
+    {
+        payload.browser = navigator.userAgent;
+        payload.location = window.location.href;
+        window.$gulpWebserverIo.server.emit(window.$gulpWebserverIo.eventName , payload);
+    };
+
     /**
      * listen to the init connection
      */
     window.$gulpWebserverIo.server.on('hello', function (msg)
     {
         console.log('debugger init connection: ' , msg);
+        if (ping) {
+            send({
+                msg: 'client hello'
+            });
+        }
     });
+
     /**
      * core implementation
      */
@@ -25,11 +41,7 @@
         if (stack) {
             message += '\n' + stack;
         }
-        window.$gulpWebserverIo.server.emit(window.$gulpWebserverIo.eventName , {
-			msg: message,
-			browser: navigator.userAgent,
-			location: window.location.href
-        });
+        send({msg: message});
     });
 
 })(window , navigator);

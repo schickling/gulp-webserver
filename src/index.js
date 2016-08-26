@@ -93,8 +93,8 @@ module.exports = function(options) {
         namespace: '/iodebugger',
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
-        client: {}, // allow passing a configuration to overwrite the client
-		server: {}, // allow passing configuration - see middleware.js for more detail
+        client: true, // allow passing a configuration to overwrite the client
+		server: true, // allow passing configuration - see middleware.js for more detail
         log: false // see wiki for more info
     }
   };
@@ -117,8 +117,8 @@ module.exports = function(options) {
   }
 
   if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
-    // ensure leading slash if this is NOT a complete url form
-    config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
+      // ensure leading slash if this is NOT a complete url form
+      config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
   }
 
   var app = connect();
@@ -138,6 +138,7 @@ module.exports = function(options) {
   if (config.livereload.enable) {
       // here already inject the live reload stuff so we need to figure out a different way to rewrite it
       if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
+          console.log('generate client');
           app.use(
               ioDebuggerInjection(config , {
                   port: config.livereload.port
@@ -172,8 +173,6 @@ module.exports = function(options) {
   }
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
   if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
-
-	    console.log(colors.white('[ioDebugger] ') + colors.yellow('client is running'));
         /**
          * a middleware to create the client, pushing them in connect app middleware
          */
@@ -268,8 +267,6 @@ module.exports = function(options) {
 
   // init our socket.io server
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
-
-	  console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running'));
 
 	  var logger;
 	  if (config.ioDebugger.log !== false) {
