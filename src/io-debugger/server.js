@@ -52,8 +52,8 @@ module.exports = function(config , server , logger)
             io.set('transports' , transports);
         }
     }
-
-    console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running'));
+    // show if this is running
+    console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running ') + colors.white(config.version));
     // run
     var namespace = io.of(config.ioDebugger.namespace);
     // start

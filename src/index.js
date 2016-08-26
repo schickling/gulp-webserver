@@ -32,7 +32,6 @@ module.exports = function(options) {
 
 
   var defaults = {
-
     /**
      *
      * BASIC DEFAULTS
@@ -106,6 +105,9 @@ module.exports = function(options) {
       'livereload',
       'ioDebugger'
   ]);
+  // inject this so I can see what version is running 
+  config.version = version;
+
   // make sure the namespace is correct first
   if (config.ioDebugger.enable) {
       var namespace = config.ioDebugger.namespace;
