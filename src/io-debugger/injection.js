@@ -7,40 +7,25 @@
    var ignore = opt.ignore || opt.excludeList || [/\.js$/, /\.css$/, /\.svg$/, /\.ico$/, /\.woff$/, /\.png$/, /\.jpg$/, /\.jpeg$/];
    var include = opt.include || [/.*/];
    var html = opt.html || _html;
-   // this is the important part to determine how the script get inserted into the page 
+   // this is the important part to determine how the script get inserted into the page
    var rules = opt.rules || [{
 	   match: /<\/head>(?![\s\S]*<\/head>)/i,
 	   fn: prepend
    }];
-   /*
-   ,{
-       match: /<\/body>(?![\s\S]*<\/body>)/i,
-       fn: append, //prepend,
-	   v: 1
-   }, {
-       match: /<\/html>(?![\s\S]*<\/html>)/i,
-       fn: prepend,
-	   v: 2
-   }, {
-       match: /<\!DOCTYPE.+>/i,
-       fn: append,
-	   v: 3
-	   }
-   */
 
    ///////////////////////////////
    //   modified for ioDebugger //
    ///////////////////////////////
 
    var ioDebuggerJs = config.ioDebugger.namespace + '/' + config.ioDebugger.js;
-   
+
    var disableCompression = opt.disableCompression || false;
 
    var debugger_snippet = '<script src="/socket.io/socket.io.js"></script>\n<script src="' + ioDebuggerJs + '"></script>\n';
 
    /**
-    * when the livereload enable we need to inject their script 
-	* @TODO we need to sepearate this two process 
+    * when the livereload enable we need to inject their script
+	* @TODO we need to sepearate this two process
 	*/
    if (config.livereload.enable) {
        var hostname = opt.hostname || 'localhost';
@@ -80,19 +65,19 @@
 
    function snip(body , strToCheck) {
        if (!body) return false;
-	   strToCheck = strToCheck || ioDebuggerJs; 
+	   strToCheck = strToCheck || ioDebuggerJs;
        return (~body.lastIndexOf(strToCheck));
    }
 
    function snap(body) {
        var _body = body;
-	   
+
 	  	// console.log('rules' , rules);
-	   
+
        rules.some(function(rule) {
            if (rule.match.test(body)) {
                _body = body.replace(rule.match, function(w) {
-				   
+
                    return rule.fn(w, snippet);
                });
                return true;
@@ -118,12 +103,12 @@
 
    // middleware
    return function(req, res, next) {
-      	// this code basically stop it from writing to the file twice 
+      	// this code basically stop it from writing to the file twice
      	// console.log('call res.__written');
 		if (res.__written) return next();
      	res.__written = true;
 		// console.log('call res.__written again');
-       
+
      	var writeHead = res.writeHead;
      	var write = res.write;
      	var end = res.end;
@@ -148,11 +133,11 @@
      	};
 
      	res.inject = res.write = function(string, encoding) {
-       		
+
 			if (string !== undefined) {
-         		
+
 				var body = string instanceof Buffer ? string.toString(encoding) : string;
-				
+
          		if (exists(body) && !snip(res.data)) {
            			// console.log('first');
 					res.push(snap(body));
