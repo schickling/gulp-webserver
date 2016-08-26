@@ -1,6 +1,6 @@
 {
   "name": "gulp-webserver-io",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Gulp plugin to run a local webserver with socket.io debugger",
   "main": "src/index.js",
   "scripts": {
@@ -14,7 +14,9 @@
     "gulpplugin",
     "webserver",
     "connect",
-    "livereload"
+    "livereload",
+    "socket.io",
+    "debugger"
   ],
   "author": "Joel Chu <joelckchu@gmail.com> (https://github.com/joelchu)",
   "license": "MIT",

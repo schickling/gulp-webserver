@@ -5,14 +5,14 @@ var fs = require('fs');
 module.exports = function(config)
 {
     var opts = config.ioDebugger;
-	
+
 	// now we need to supply a configurated option to not just point to our own local test machine
 	var debuggerHost = opts.server.host || config.host;
-	var debuggerPort = opts.server.port || config.port; 
+	var debuggerPort = opts.server.port || config.port;
 	var debuggerPath = opts.namespace;
 	var debuggerJs   = debuggerPath + '/' + opts.js;
 	var debuggerEventName = opts.eventName;
-	
+
     return function(req , res , next)
     {
         if (req.url === debuggerJs) {
@@ -27,7 +27,17 @@ module.exports = function(config)
                 var serveData = data.toString().replace('{host}' , debuggerHost)
 											   .replace('{port}' , debuggerPort)
 											   .replace('{debuggerPath}' , debuggerPath)
-											   .replace('{eventName}' , debuggerEventName)
+											   .replace('{eventName}' , debuggerEventName);
+                // force websocket connection
+                // see: http://stackoverflow.com/questions/8970880/cross-domain-connection-in-socket-io
+                var connectionOptions = '';
+                if (typeof config.ioDebugger.server === 'object') {
+                    if (config.ioDebugger.server.socketOnly) {
+                        connecitonOptions = "{'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transport': ['websocket']}";
+                    }
+                }
+                serveData = serveData.replace('{connectionOptions}' , connectionOptions);
+
                 // console.log('serving up the client.js' , serveData);
                 res.writeHead(200);
                 res.end(serveData);

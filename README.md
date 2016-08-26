@@ -23,6 +23,8 @@ All the original `gulp-webserver` configuration is the same. To configure the ne
 
     });
 
+*NOTE this ioDebugger set to true by default since V1.0.4, because we assume you want to use this feature otherwise you wouldn't be using it, right?*    
+
 Once you run your gulp task. Your browser will find two extra files injected 1. The `socket.io.js` 2. `io-debugger-client.js`
 
 Also on the initial run, you will received a message from the `console.log`
@@ -81,6 +83,8 @@ You could fine tune how the client run as well
 
 There might be situation where you just want to run your client code but point to a different server. Note that when you set it up like this, you MUST
 include the `/socket.io/socket.io.js` file from somewhere else.
+
+See [server configuration option](https://github.com/joelchu/gulp-webserver-io/wiki/Server-configuration-option) for more information.
 
 ####server
 

@@ -36,6 +36,12 @@ module.exports = function(config , server , logger)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
+    // force the socket.io server to use websocket protocol only
+    if (typeof config.ioDebugger.server === 'object') {
+        if (config.ioDebugger.server.socketOnly) {
+            io.set('transport' , ['websocket']);
+        }
+    }
     // run
     var namespace = io.of(config.ioDebugger.namespace);
     // start

@@ -77,9 +77,9 @@ module.exports = function(options) {
     // For possible options, see:
     //  https://github.com/expressjs/serve-index
     directoryListing: {
-      enable: false,
-      path: './',
-      options: undefined
+        enable: false,
+        path: './',
+        options: undefined
     },
 
     // Middleware: Proxy
@@ -89,7 +89,7 @@ module.exports = function(options) {
     // create our socket.io debugger
     // using the socket.io instead of just normal post allow us to do this cross domain
     ioDebugger: {
-        enable: false,
+        enable: true, // turn on by default otherwise they wouldn't be using this version anyway
         namespace: '/iodebugger',
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
@@ -173,7 +173,7 @@ module.exports = function(options) {
   // if the ioDebugger is enable then we need to inject our own middleware here to generate the client file
   if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
 
-	  console.log(colors.yellow('ioDebugger client is running'));
+	    console.log(colors.white('[ioDebugger] ') + colors.yellow('client is running'));
         /**
          * a middleware to create the client, pushing them in connect app middleware
          */
@@ -269,7 +269,7 @@ module.exports = function(options) {
   // init our socket.io server
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
 
-	  console.log(colors.yellow('ioDebugger server is running'));
+	  console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running'));
 
 	  var logger;
 	  if (config.ioDebugger.log !== false) {
