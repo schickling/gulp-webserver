@@ -140,14 +140,14 @@ module.exports = function(options) {
       if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
           app.use(
               ioDebuggerInjection(config , {
-                  host: config.livereload.hostname || config.host
+                  host: config.livereload.hostname || config.host,
                   port: config.livereload.port || config.port
               })
           );
       }
       else {
           app.use(connectLivereload({
-              host: config.livereload.hostname || config.host
+              host: config.livereload.hostname || config.host,
               port: config.livereload.port || config.port
           }));
       }
