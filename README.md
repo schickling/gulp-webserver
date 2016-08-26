@@ -43,7 +43,7 @@ which run the gulp will also see the message as well.
         js: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
         client: {}, // see below
 		server: {}, // see below
-		log: false // @TODO not implement yet. But it will log to a file using the timestamp
+		log: false // See below
     }
 ```
 
@@ -65,7 +65,7 @@ The reason why you want to do this may be because you want to fine-tune the cons
 
 Also you might want to integrate into your log method from your application.
 
-Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-an-Angular-(1.X)-$log-that-log-message-to-the-server.).
+Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-an-Angular-(1.X)-%24log-that-log-message-to-the-server.).
 
 You could fine tune how the client run as well
 
