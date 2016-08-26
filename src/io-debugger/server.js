@@ -44,15 +44,15 @@ module.exports = function(config , server , logger)
     */
     if (typeof config.ioDebugger.server === 'object') {
         if (config.ioDebugger.server.socketOnly) {
-            if (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig)) {
-                io.set('transport' , config.ioDebugger.server.transportConfig);
-            }
-            else {
-                io.set('transport' , ['websocket']);
-            }
+
+            var transports = (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig))
+                           ? config.ioDebugger.server.transportConfig
+                           : ['websocket'];
+
+            io.set('transports' , transports);
         }
     }
-    
+
     console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running'));
     // run
     var namespace = io.of(config.ioDebugger.namespace);

@@ -14,6 +14,8 @@ module.exports = function(config)
 	var debuggerJs   = debuggerPath + '/' + opts.js;
 	var debuggerEventName = opts.eventName;
 
+    console.log(colors.white('[ioDebugger] ') + colors.yellow('client is running'));
+
     return function(req , res , next)
     {
         if (req.url === debuggerJs) {
@@ -38,25 +40,21 @@ module.exports = function(config)
                 // force websocket connection
                 // see: http://stackoverflow.com/questions/8970880/cross-domain-connection-in-socket-io
                 var connectionOptions = '';
-                /*
 
-                Have to disabled this feature, there is a problem with the setting that cause the client not running WTF!
-                */
                 if (typeof config.ioDebugger.server === 'object') {
                     if (config.ioDebugger.server.socketOnly) {
                         if (config.ioDebugger.server.clientConnectionOptions && typeof config.ioDebugger.server.clientConnectionOptions === 'object') {
-                            connnectionOptions = ", " + JSON.stringify(config.ioDebugger.server.clientConnectionOptions);
+                            connectionOptions = ", " + JSON.stringify(config.ioDebugger.server.clientConnectionOptions);
                         }
                         else {
-                            connecitonOptions = ", {'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transport': ['websocket']}";
+                            connectionOptions = ", {'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transports': ['websocket']}";
                         }
                     }
                 }
 
                 serveData = serveData.replace('{connectionOptions}' , connectionOptions);
 
-                console.log(colors.white('[ioDebugger] ') + colors.yellow('client is running'));
-                // console.log('serving up the client.js' , serveData);
+                // @TODO we should cache this file, otherwise every reload will have to generate it again
                 res.writeHead(200);
                 res.end(serveData);
             });

@@ -138,7 +138,6 @@ module.exports = function(options) {
   if (config.livereload.enable) {
       // here already inject the live reload stuff so we need to figure out a different way to rewrite it
       if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
-          console.log('generate client');
           app.use(
               ioDebuggerInjection(config , {
                   port: config.livereload.port
