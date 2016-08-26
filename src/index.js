@@ -105,7 +105,7 @@ module.exports = function(options) {
       'livereload',
       'ioDebugger'
   ]);
-  // inject this so I can see what version is running 
+  // inject this so I can see what version is running
   config.version = version;
 
   // make sure the namespace is correct first
@@ -142,15 +142,13 @@ module.exports = function(options) {
       if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
           app.use(
               ioDebuggerInjection(config , {
-                  host: config.livereload.hostname || config.host,
-                  port: config.livereload.port || config.port
+                  port: config.livereload.port
               })
           );
       }
       else {
           app.use(connectLivereload({
-              host: config.livereload.hostname || config.host,
-              port: config.livereload.port || config.port
+              port: config.livereload.port
           }));
       }
 
