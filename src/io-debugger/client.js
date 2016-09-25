@@ -41,7 +41,7 @@
         if (stack) {
             message += '\n' + stack;
         }
-        send({msg: message});
+        send({msg: message , from: 'error' , color: 'debug'});
     });
 
 })(window , navigator);
