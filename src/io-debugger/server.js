@@ -135,5 +135,9 @@ module.exports = function(config , server , logger)
         socket.emit('reply' , 'I am running');
         // @TODO passing list of eventname and method here to do stuff
     });
+    // try to pass this io object back to the script running this process
+    if (config.ioDebugger.ioResolver) {
+        config.ioDebugger.ioResolver(internalNamespace);
+    }
 };
 // EOF
