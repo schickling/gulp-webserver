@@ -133,13 +133,15 @@ module.exports = function(config , server , logger)
     if (config.ioDebugger.connectionNamespace !== false) {
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
+        // start the connection 
         internalNamespace.on('connection' , function(socket)
         {
             socket.emit('reply' , 'I am running');
-            // the only thing listening is a ping
-            socket.on('ping' , function(msg)
+            // rename to shout , because ping / pong are reserved
+            socket.on('shoutat' , function(msg)
             {
-                socket.emit('pong' , msg);
+                console.log('someone shout at me' , msg);
+                socket.emit('shoutback' , msg);
             });
         });
 
