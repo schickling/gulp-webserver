@@ -142,6 +142,7 @@ module.exports = function(config , server , logger)
                 socket.emit('pong' , msg);
             });
         });
+
         // try to pass this io object back to the script running this process
         if (config.ioDebugger.ioResolver && typeof config.ioDebugger.ioResolver === 'function') {
             config.ioDebugger.ioResolver(internalNamespace);

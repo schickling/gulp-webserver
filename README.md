@@ -94,6 +94,41 @@ If you pass `server:false` then the server listener will not run. This has to wo
 
 Please check the [wiki](https://github.com/joelchu/gulp-webserver-io/wiki) for more configuration options.
 
+
+## NEW FEATURE @ 1.1.5
+
+I have added a new feature to allow you to retrieve the underlying socket.io object and a separate namespace.
+
+Now you can pass this two options
+
+```javascript
+    ioDebugger: {
+        enable: true,
+        connectionNamespace: '/iodebuggerconnection',
+        ioResolver: function(socket) {
+            // now do things with this socket
+            socket.on('connect' , function()
+            {
+                // this is a default event emit as soon as it get connected
+                socket.on('reply' , function(msg)
+                {
+                    console.log(msg);
+                });
+
+                socket.emit('ping'); // a pong event will get emitted
+            });
+        }
+    }
+```
+
+Why you might ask? Because I am working on a remote control panel to control several gulp build tool
+to start running / stopping / rebuilding / commit etc. And by leverage what I already got. You can
+easily just clone your repo to your server, and then control it from another machine for testing / debugging / demo purposes.
+
+More coming soon.
+
+---
+
 ## Install
 
 ```sh
