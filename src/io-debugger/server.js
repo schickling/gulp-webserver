@@ -127,13 +127,19 @@ module.exports = function(config , server , logger)
     });
     // end configurable name space
 
+    // it didn't work once we use the ioResolver to return the namespaced socket
+    // what about we just export the io object directly?
+    // try to pass this io object back to the script running this process
+    if (config.ioDebugger.ioResolver && typeof config.ioDebugger.ioResolver === 'function') {
+        config.ioDebugger.ioResolver(io);
+    }
+
     // this new namespace is for allowing a third party client to connect to this io server
     // to get an idea if it's running or not
-
     if (config.ioDebugger.connectionNamespace !== false) {
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
-        // start the connection 
+        // start the connection
         internalNamespace.on('connection' , function(socket)
         {
             socket.emit('reply' , 'I am running');
@@ -144,11 +150,9 @@ module.exports = function(config , server , logger)
                 socket.emit('shoutback' , msg);
             });
         });
-
-        // try to pass this io object back to the script running this process
-        if (config.ioDebugger.ioResolver && typeof config.ioDebugger.ioResolver === 'function') {
-            config.ioDebugger.ioResolver(internalNamespace);
-        }
     }
+
+    // finally we return the io object
+    return io;
 };
 // EOF

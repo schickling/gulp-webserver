@@ -100,6 +100,7 @@ module.exports = function(options) {
     }
   };
 
+
   // Deep extend user provided options over the all of the defaults
   // Allow shorthand syntax, using the enable property as a flag
   var config = enableMiddlewareShorthand(defaults, options, [
@@ -267,7 +268,7 @@ module.exports = function(options) {
   } else {
     	webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
   }
-
+  var socket;
   // init our socket.io server
   if (config.ioDebugger.enable && config.ioDebugger.server !== false) {
 
@@ -282,7 +283,8 @@ module.exports = function(options) {
 			  logger = require('./io-debugger/logger.js');
 		  }
 	  }
-      var ioDebugger = ioDebuggerServer(config , webserver , logger);
+      // passing the raw io object back
+      socket = ioDebuggerServer(config , webserver , logger);
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
@@ -294,7 +296,9 @@ module.exports = function(options) {
     	if (config.livereload.enable) {
       		lrServer.close();
     	}
-
+        if (config.ioDebugger.enable) {
+            socket.server.close();
+        }
   });
 
   return stream;
