@@ -5,7 +5,7 @@ var https = require('https');
 var connect = require('connect');
 var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
-var proxy = require('node-proxy-middleware-spy-io'); // @2016-12-12 changed 
+var proxy = require('node-proxy-middleware-spy-io'); // @2016-12-12 changed
 var tinyLr = require('tiny-lr');
 var watch = require('watch');
 var fs = require('fs');
@@ -84,12 +84,14 @@ module.exports = function(options) {
     // Middleware: Proxy
     // For possible options, see:
     //  https://github.com/andrewrk/connect-proxy
+    // this has not replace with a folk version https://github.com/joelchu/node-proxy-middleware-spy-io
     proxies: [],
     // create our socket.io debugger
     // using the socket.io instead of just normal post allow us to do this cross domain
     ioDebugger: {
         enable: true, // turn on by default otherwise they wouldn't be using this version anyway
         namespace: '/iodebugger',
+        connectionNamespace: '/iodebuggerconnection',
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
         client: true, // allow passing a configuration to overwrite the client
