@@ -125,5 +125,15 @@ module.exports = function(config , server , logger)
 			}
         });
     });
+    // end configurable name space
+
+    // this new namespace is for allowing a third party client to connect to this io server
+    // to get an idea if it's running or not
+    var internalNamespace = io.of(config.ioDebugger.connectionNamespace || 'io-debugger-connection');
+    internalNamespace.on('connection' , function(socket)
+    {
+        socket.emit('reply' , 'I am running');
+        // @TODO passing list of eventname and method here to do stuff
+    });
 };
 // EOF
