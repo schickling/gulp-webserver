@@ -105,6 +105,16 @@ Now you can pass this two options
     ioDebugger: {
         enable: true,
         connectionNamespace: '/iodebuggerconnection',
+        /**
+            after several test the namespace socket object
+            is not doing anything once capture by the ioResolver
+            now I am returning the raw io, so you need to do the
+            io.of(this.connectionNamespace) or other namespace
+
+            also they connectionNamespace option for other purpose from the start
+            anyway. Because I want to able to track several gulp instance running
+            from another machine.
+        **/
         ioResolver: function(socket) {
             // now do things with this socket
             socket.on('connect' , function()
