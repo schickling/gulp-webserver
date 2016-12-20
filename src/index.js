@@ -285,6 +285,14 @@ module.exports = function(options) {
 	  }
       // passing the raw io object back
       socket = ioDebuggerServer(config , webserver , logger);
+
+      // it didn't work once we use the ioResolver to return the namespaced socket
+      // what about we just export the io object directly?
+      // try to pass this io object back to the script running this process
+      if (config.ioDebugger.ioResolver && typeof config.ioDebugger.ioResolver === 'function') {
+          // 2016-12-20 try to do this here and see what happen
+          config.ioDebugger.ioResolver(socket);
+      }
   }
 
   gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));

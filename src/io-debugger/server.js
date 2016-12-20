@@ -1,7 +1,7 @@
 /**
  * the socket.io part
  */
-var io = require('socket.io');
+// var io = require('socket.io');
 var colors = require('colors');
 var util = require('util');
 var isarray = require('isarray');
@@ -127,13 +127,6 @@ module.exports = function(config , server , logger)
     });
     // end configurable name space
 
-    // it didn't work once we use the ioResolver to return the namespaced socket
-    // what about we just export the io object directly?
-    // try to pass this io object back to the script running this process
-    if (config.ioDebugger.ioResolver && typeof config.ioDebugger.ioResolver === 'function') {
-        config.ioDebugger.ioResolver(io);
-    }
-
     // this new namespace is for allowing a third party client to connect to this io server
     // to get an idea if it's running or not
     if (config.ioDebugger.connectionNamespace !== false) {
@@ -144,15 +137,19 @@ module.exports = function(config , server , logger)
         {
             socket.emit('reply' , 'I am running');
             // rename to shout , because ping / pong are reserved
-            socket.on('shoutat' , function(msg)
+            socket.on('shoutat' , function(msg , fn)
             {
-                console.log('someone shout at me' , msg);
+                // callback
+                fn((new Date()).toUTCString());
+                // pong
                 socket.emit('shoutback' , msg);
             });
         });
+        // when we use this name space then return this one
+        return internalNamespace;
     }
 
-    // finally we return the io object
-    return io;
+    // finally we return the io object just the name space
+    return namespace;
 };
 // EOF

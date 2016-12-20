@@ -111,21 +111,19 @@ Now you can pass this two options
             now I am returning the raw io, so you need to do the
             io.of(this.connectionNamespace) or other namespace
 
-            also they connectionNamespace option for other purpose from the start
-            anyway. Because I want to able to track several gulp instance running
-            from another machine.
+            this option is enable by DEFAULT
+            now it's only serving the purpose of checking if
+            this webserver is running or not
         **/
         ioResolver: function(socket) {
             // now do things with this socket
             socket.on('connect' , function()
             {
                 // this is a default event emit as soon as it get connected
-                socket.on('reply' , function(msg)
+                socket.on('reply' , function(msg , fn)
                 {
-                    console.log(msg);
+                    fn(msg); // sending a reply straight back for testing purposes
                 });
-
-                socket.emit('ping'); // a pong event will get emitted
             });
         }
     }
