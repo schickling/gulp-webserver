@@ -104,28 +104,10 @@ Now you can pass this two options
 ```javascript
     ioDebugger: {
         enable: true,
-        connectionNamespace: '/iodebuggerconnection',
-        /**
-            after several test the namespace socket object
-            is not doing anything once capture by the ioResolver
-            now I am returning the raw io, so you need to do the
-            io.of(this.connectionNamespace) or other namespace
-
-            this option is enable by DEFAULT
-            now it's only serving the purpose of checking if
-            this webserver is running or not
-        **/
-        ioResolver: function(socket) {
-            // now do things with this socket
-            socket.on('connect' , function()
-            {
-                // this is a default event emit as soon as it get connected
-                socket.on('reply' , function(msg , fn)
-                {
-                    fn(msg); // sending a reply straight back for testing purposes
-                });
-            });
-        }
+        // please note this is enable by default unless pass as false
+        // the use case is to have another client to talk to this
+        // namespace to know if this webserver is running or not
+        connectionNamespace: '/iodebuggerconnection'
     }
 ```
 

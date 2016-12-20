@@ -132,6 +132,9 @@ module.exports = function(config , server , logger)
     if (config.ioDebugger.connectionNamespace !== false) {
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
+
+        console.log('[ioDebugger] ' + colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace));
+        
         // start the connection
         internalNamespace.on('connection' , function(socket)
         {
