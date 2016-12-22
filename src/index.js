@@ -91,10 +91,19 @@ module.exports = function(options) {
   var app = connect();
 
   var openInBrowser = function() {
+    var browser;
     if (config.open === false) return;
     if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
       // if this is a complete url form
       open(config.open);
+      return;
+    }
+    //Specifies a browser other than the system default browser
+    if (typeof config.open === 'object' && config.open.url.indexOf('http') === 0) {
+      // redefine config.open to avoid modify the src of the 'open' module
+      browser = config.open.browser;
+      config.open = config.open.url;
+      open(config.open, browser);
       return;
     }
     open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
