@@ -38,6 +38,13 @@ module.exports = function(config , server , logger)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
+    /*
+    var debugDisplay = function()
+    {
+        var args = Array.apply(null , arguments);
+        console.log.apply(null , [colors.white('[ioDebugger] ')].concat(args));
+    };
+    */
     // force the socket.io server to use websocket protocol only
     /*
     There is a problem with this setting that cause the whole thing stop working!
@@ -132,8 +139,19 @@ module.exports = function(config , server , logger)
     if (config.ioDebugger.connectionNamespace !== false) {
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
+        var test = false;
+        console.log(
+            colors.white('[ioDebugger]') ,
+            colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace)
+        );
 
-        console.log([colors.white('[ioDebugger]') , colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace)].join(' '));
+        if (config.ioDebugger.connectionNamespaceCallbackTest === true) {
+            console.log(
+                colors.white('[ioDebugger]'),
+                colors.yellow('connection name space running in test mode')
+            );
+            test = true;
+        }
 
         // start the connection
         internalNamespace.on('connection' , function(socket)
@@ -153,11 +171,16 @@ module.exports = function(config , server , logger)
              * but the client never able to response to anything.
              * what if we create an event emitter and see what happen then
              */
-            /*
             class MyEmitter extends EventEmitter {}
             const ioEmitter = new MyEmitter();
 
             if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+                if (test) {
+                    console.log(
+                        colors.white('[ioDebugger]'),
+                        'passing the ioEmitter to the callback'
+                    );
+                }
                 config.ioDebugger.connectionNamespaceCallback(ioEmitter);
             }
 
@@ -165,16 +188,17 @@ module.exports = function(config , server , logger)
 
             socket.on('cmd' , function(msg , fn)
             {
+                if (test) {
+                    console.log(
+                        colors.white('[ioDebugger]'),
+                        config.ioDebugger.connectionNamespace + ' received a cmd',
+                        msg
+                    );
+                }
                 ioEmitter.emit('cmd' , msg);
                 fn( ( new Date() ).toUTCString() );
             });
-            */
         });
-
-        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
-            config.ioDebugger.connectionNamespaceCallback(internalNamespace);
-        }
-
 
         // when we use this name space then return this one
         return internalNamespace;
