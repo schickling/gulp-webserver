@@ -165,6 +165,15 @@ module.exports = function(config , server , logger)
                 // pong
                 socket.emit('shoutback' , msg);
             });
+        });
+        // callback
+        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+            if (test) {
+                console.log(
+                    colors.white('[ioDebugger]'),
+                    'passing the ioEmitter to the callback'
+                );
+            }
             /**
              * here is the problem with the delivery the message outside
              * we couldn't pass this io object - the connection was made
@@ -174,19 +183,11 @@ module.exports = function(config , server , logger)
             class MyEmitter extends EventEmitter {}
             const ioEmitter = new MyEmitter();
 
-            if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
-                if (test) {
-                    console.log(
-                        colors.white('[ioDebugger]'),
-                        'passing the ioEmitter to the callback'
-                    );
-                }
-                config.ioDebugger.connectionNamespaceCallback(ioEmitter);
-            }
+            config.ioDebugger.connectionNamespaceCallback(ioEmitter);
 
             ioEmitter.once('test' , 'message from ' + config.ioDebugger.connectionNamespace);
 
-            socket.on('cmd' , function(msg , fn)
+            internalNamespace.on('cmd' , function(msg , fn)
             {
                 if (test) {
                     console.log(
@@ -198,7 +199,21 @@ module.exports = function(config , server , logger)
                 ioEmitter.emit('cmd' , msg);
                 fn( ( new Date() ).toUTCString() );
             });
-        });
+            // response with the same event
+            ioEmitter.on('cmd' , function(msg)
+            {
+                internalNamespace.emit('recmd' , msg , function(receipt)
+                {
+                    if (test) {
+                        console.log(
+                            colors.white('[ioDebugger]'),
+                            'cmd to remote receipt',
+                            receipt 
+                        );
+                    }
+                });
+            });
+        }
 
         // when we use this name space then return this one
         return internalNamespace;
