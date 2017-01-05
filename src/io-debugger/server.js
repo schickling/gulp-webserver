@@ -185,7 +185,7 @@ module.exports = function(config , server , logger)
 
             config.ioDebugger.connectionNamespaceCallback(ioEmitter);
 
-            ioEmitter.once('test' , 'message from ' + config.ioDebugger.connectionNamespace);
+            ioEmitter.emit('test connection' , 'message from ' + config.ioDebugger.connectionNamespace);
 
             internalNamespace.on('cmd' , function(msg , fn)
             {
@@ -208,7 +208,7 @@ module.exports = function(config , server , logger)
                         console.log(
                             colors.white('[ioDebugger]'),
                             'cmd to remote receipt',
-                            receipt 
+                            receipt
                         );
                     }
                 });
