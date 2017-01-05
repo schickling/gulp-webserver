@@ -5,6 +5,7 @@
 var colors = require('colors');
 var util = require('util');
 var isarray = require('isarray');
+var EventEmitter = require('events');
 /**
  * just getting some color configuration
  */
@@ -39,7 +40,6 @@ module.exports = function(config , server , logger)
 	var keys = ['browser' , 'location'];
     // force the socket.io server to use websocket protocol only
     /*
-
     There is a problem with this setting that cause the whole thing stop working!
     */
     if (typeof config.ioDebugger.server === 'object') {
@@ -133,8 +133,8 @@ module.exports = function(config , server , logger)
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
 
-        console.log('[ioDebugger] ' + colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace));
-        
+        console.log([colors.white('[ioDebugger]') , colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace)].join(' '));
+
         // start the connection
         internalNamespace.on('connection' , function(socket)
         {
@@ -147,7 +147,35 @@ module.exports = function(config , server , logger)
                 // pong
                 socket.emit('shoutback' , msg);
             });
+            /**
+             * here is the problem with the delivery the message outside
+             * we couldn't pass this io object - the connection was made
+             * but the client never able to response to anything.
+             * what if we create an event emitter and see what happen then
+             */
+            /*
+            class MyEmitter extends EventEmitter {}
+            const ioEmitter = new MyEmitter();
+
+            if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+                config.ioDebugger.connectionNamespaceCallback(ioEmitter);
+            }
+
+            ioEmitter.once('test' , 'message from ' + config.ioDebugger.connectionNamespace);
+
+            socket.on('cmd' , function(msg , fn)
+            {
+                ioEmitter.emit('cmd' , msg);
+                fn( ( new Date() ).toUTCString() );
+            });
+            */
         });
+
+        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+            config.ioDebugger.connectionNamespaceCallback(internalNamespace);
+        }
+
+
         // when we use this name space then return this one
         return internalNamespace;
     }
