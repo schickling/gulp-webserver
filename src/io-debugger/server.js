@@ -140,6 +140,7 @@ module.exports = function(config , server , logger)
 
         var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
         var test = false;
+        var ioEmitter = false;
         console.log(
             colors.white('[ioDebugger]') ,
             colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace)
@@ -153,6 +154,18 @@ module.exports = function(config , server , logger)
             test = true;
         }
 
+        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+            /**
+             * here is the problem with the delivery the message outside
+             * we couldn't pass this io object - the connection was made
+             * but the client never able to response to anything.
+             * what if we create an event emitter and see what happen then
+             */
+            class MyEmitter extends EventEmitter {}
+            ioEmitter = new MyEmitter();
+            config.ioDebugger.connectionNamespaceCallback(ioEmitter);
+            ioEmitter.emit('test connection' , 'message from ' + config.ioDebugger.connectionNamespace);
+        }
         // start the connection
         internalNamespace.on('connection' , function(socket)
         {
@@ -165,29 +178,8 @@ module.exports = function(config , server , logger)
                 // pong
                 socket.emit('shoutback' , msg);
             });
-        });
-        // callback
-        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
-            if (test) {
-                console.log(
-                    colors.white('[ioDebugger]'),
-                    'passing the ioEmitter to the callback'
-                );
-            }
-            /**
-             * here is the problem with the delivery the message outside
-             * we couldn't pass this io object - the connection was made
-             * but the client never able to response to anything.
-             * what if we create an event emitter and see what happen then
-             */
-            class MyEmitter extends EventEmitter {}
-            const ioEmitter = new MyEmitter();
 
-            config.ioDebugger.connectionNamespaceCallback(ioEmitter);
-
-            ioEmitter.emit('test connection' , 'message from ' + config.ioDebugger.connectionNamespace);
-
-            internalNamespace.on('cmd' , function(msg , fn)
+            socket.on('cmd' , function(msg , fn)
             {
                 if (test) {
                     console.log(
@@ -196,24 +188,28 @@ module.exports = function(config , server , logger)
                         msg
                     );
                 }
-                ioEmitter.emit('cmd' , msg);
+                if (ioEmitter) {
+                    ioEmitter.emit('cmd' , msg);
+                }
                 fn( ( new Date() ).toUTCString() );
             });
-            // response with the same event
-            ioEmitter.on('cmd' , function(msg)
-            {
-                internalNamespace.emit('recmd' , msg , function(receipt)
+
+            if (ioEmitter) {
+                ioEmitter.on('cmd' , function(msg)
                 {
-                    if (test) {
-                        console.log(
-                            colors.white('[ioDebugger]'),
-                            'cmd to remote receipt',
-                            receipt
-                        );
-                    }
+                    socket.emit('recmd' , msg , function(receipt)
+                    {
+                        if (test) {
+                            console.log(
+                                colors.white('[ioDebugger]'),
+                                'cmd to remote receipt',
+                                receipt
+                            );
+                        }
+                    });
                 });
-            });
-        }
+            }
+        });
 
         // when we use this name space then return this one
         return internalNamespace;
