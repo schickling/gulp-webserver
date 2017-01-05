@@ -95,7 +95,7 @@ If you pass `server:false` then the server listener will not run. This has to wo
 Please check the [wiki](https://github.com/joelchu/gulp-webserver-io/wiki) for more configuration options.
 
 
-## NEW FEATURE @ 1.1.5
+## NEW FEATURE @ 1.2.X
 
 I have added a new feature to allow you to retrieve the underlying socket.io object and a separate namespace.
 
@@ -111,11 +111,94 @@ Now you can pass this two options
     }
 ```
 
+Please note this feature is turn off by default. If you want to turn it off
+
+```javascript
+    ioDebugger: {
+        enable: true,
+        connectionNamespace: false
+    }
+```
+
+Now you can setup a remote connection to test if this web server is running or not.
+Take a look at this test script:
+
+```javascript
+const assert = require('chai').assert;
+const should = require('should');
+
+const io = require('socket.io-client');
+// just using the default setup
+const socketURL = 'http://localhost:8000/iodebuggerconnection';
+
+const options = {
+    transports: ['websocket'],
+    'force new connection': true
+};
+
+let client = null;
+
+describe('Connection with gulp-webserver-io' , function()
+{
+    before(function()
+    {
+        client = io.connect(socketURL , options);
+    });
+
+    after(function()
+    {
+        client.disconnect();
+    });
+
+    it('Should hear the socket connection' , function(done)
+    {
+        client.on('connect' , function(msg)
+        {
+            client.on('reply' , function(msg)
+            {
+                msg.should.equal('I am running');
+                done();
+            });
+        });
+    });
+
+    it('Should response to cmd event' , function(done)
+    {
+        client.emit('cmd' , 'test from mocha test' , function(receipt)
+        {
+            receipt.should.be.a.String;
+            done();
+        });
+    });
+
+});
+
+```
+
 Why you might ask? Because I am working on a remote control panel to control several gulp build tool
 to start running / stopping / rebuilding / commit etc. And by leverage what I already got. You can
 easily just clone your repo to your server, and then control it from another machine for testing / debugging / demo purposes.
 
-More coming soon.
+So now if you pass a callback to the config
+
+```javascript
+    ioDebugger: {
+        enable: true,
+        connectionNamespaceCallback: (io) =>
+        {
+            io.on('cmd' , (msg) =>
+            {
+                // now you can call other methods from within your gulpfile  
+                // with the Gulp V.4 since the task are just standard function
+                // you could easily create a remote control here to do various task
+                // given that this webserver is running
+            });
+            // you can also send a message back
+            io.emit('cmd' , 'I have something to tell you ...');
+            
+        }
+    }
+```
 
 ---
 
