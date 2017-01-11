@@ -38,7 +38,7 @@ module.exports = function(config , server , logger)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
-    
+
     /*
     var debugDisplay = function()
     {
@@ -162,7 +162,6 @@ module.exports = function(config , server , logger)
              * what if we create an event emitter and see what happen then
              */
             class MyEmitter extends EventEmitter {}
-
             const emitterInstance = new MyEmitter();
             // increase the listener amount to stop that memory leak warning
             ioEmitter = emitterInstance.setMaxListeners(100);
@@ -207,6 +206,7 @@ module.exports = function(config , server , logger)
                             msg
                         );
                     }
+                    ioEmitter.emit('reply' , 'got your cmd');
                     socket.emit('recmd' , msg , function(receipt)
                     {
                         if (test) {
@@ -216,11 +216,11 @@ module.exports = function(config , server , logger)
                                 receipt
                             );
                         }
+                        ioEmitter.emit('reply' , 'got receipt back from remote server');
                     });
                 });
             }
         });
-
         // when we use this name space then return this one
         return internalNamespace;
     }
