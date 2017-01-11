@@ -162,7 +162,10 @@ module.exports = function(config , server , logger)
              * what if we create an event emitter and see what happen then
              */
             class MyEmitter extends EventEmitter {}
-            ioEmitter = new MyEmitter();
+
+            const emitterInstance = new MyEmitter();
+            // increase the listener amount to stop that memory leak warning
+            ioEmitter = emitterInstance.setMaxListeners(100);
             config.ioDebugger.connectionNamespaceCallback(ioEmitter);
             ioEmitter.emit('test connection' , 'message from ' + config.ioDebugger.connectionNamespace);
         }
