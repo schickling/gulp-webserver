@@ -136,14 +136,19 @@ module.exports = function(config , server , logger)
 
     // this new namespace is for allowing a third party client to connect to this io server
     // to get an idea if it's running or not
-    if (config.ioDebugger.connectionNamespace !== false) {
-
-        var internalNamespace = io.of(config.ioDebugger.connectionNamespace);
+    if (config.ioDebugger.connectionNamespace !== undefined && config.ioDebugger.connectionNamespace !== false) {
+        // force it to be a string
+        var ns = config.ioDebugger.connectionNamespace + '';
+        if (ns.substr(0,1)!=='/') {
+            ns = '/' + ns;
+        }
+        // setup
+        var internalNamespace = io.of(ns);
         var test = false;
         var ioEmitter = false;
         console.log(
             colors.white('[ioDebugger]') ,
-            colors.yellow('namespace: ' + config.ioDebugger.connectionNamespace)
+            colors.yellow('namespace: ' + ns)
         );
 
         if (config.ioDebugger.connectionNamespaceCallbackTest === true) {
@@ -166,7 +171,7 @@ module.exports = function(config , server , logger)
             // increase the listener amount to stop that memory leak warning
             ioEmitter = emitterInstance.setMaxListeners(100);
             config.ioDebugger.connectionNamespaceCallback(ioEmitter);
-            ioEmitter.emit('test connection' , 'message from ' + config.ioDebugger.connectionNamespace);
+            ioEmitter.emit('test connection' , 'message from ' + ns);
         }
         // start the connection
         internalNamespace.on('connection' , function(socket)
@@ -186,7 +191,7 @@ module.exports = function(config , server , logger)
                 if (test) {
                     console.log(
                         colors.white('[ioDebugger]'),
-                        config.ioDebugger.connectionNamespace + ' received a cmd',
+                        ns + ' received a cmd',
                         msg
                     );
                 }
@@ -207,6 +212,7 @@ module.exports = function(config , server , logger)
                         );
                     }
                     ioEmitter.emit('reply' , 'got your cmd');
+                    // @2017-01-11 this is still not working
                     socket.emit('recmd' , msg , function(receipt)
                     {
                         if (test) {

@@ -91,7 +91,7 @@ module.exports = function(options) {
     ioDebugger: {
         enable: true, // turn on by default otherwise they wouldn't be using this version anyway
         namespace: '/iodebugger',
-        connectionNamespace: '/iodebuggerconnection',
+        connectionNamespace: false, // '/iodebuggerconnection', @1.2.4 this is disabled by default 
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
         client: true, // allow passing a configuration to overwrite the client

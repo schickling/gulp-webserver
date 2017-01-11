@@ -99,7 +99,7 @@ Please check the [wiki](https://github.com/joelchu/gulp-webserver-io/wiki) for m
 
 I have added a new feature to allow you to retrieve the underlying socket.io object and a separate namespace.
 
-Now you can pass this two options
+Please note this feature is turn off by default.  Now you can pass this two options
 
 ```javascript
     ioDebugger: {
@@ -108,15 +108,6 @@ Now you can pass this two options
         // the use case is to have another client to talk to this
         // namespace to know if this webserver is running or not
         connectionNamespace: '/iodebuggerconnection'
-    }
-```
-
-Please note this feature is turn off by default. If you want to turn it off
-
-```javascript
-    ioDebugger: {
-        enable: true,
-        connectionNamespace: false
     }
 ```
 
@@ -195,7 +186,7 @@ So now if you pass a callback to the config
             });
             // you can also send a message back
             io.emit('cmd' , 'I have something to tell you ...');
-            
+
         }
     }
 ```
