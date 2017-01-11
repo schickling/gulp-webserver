@@ -38,6 +38,7 @@ module.exports = function(config , server , logger)
 {
     var io = require('socket.io')(server);
 	var keys = ['browser' , 'location'];
+    
     /*
     var debugDisplay = function()
     {
@@ -51,7 +52,6 @@ module.exports = function(config , server , logger)
     */
     if (typeof config.ioDebugger.server === 'object') {
         if (config.ioDebugger.server.socketOnly) {
-
             var transports = (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig))
                            ? config.ioDebugger.server.transportConfig
                            : ['websocket'];
@@ -200,6 +200,13 @@ module.exports = function(config , server , logger)
             if (ioEmitter) {
                 ioEmitter.on('cmd' , function(msg)
                 {
+                    if (test) {
+                        console.log(
+                            colors.white('[ioDebugger]'),
+                            'received cmd from ioEmitter',
+                            msg
+                        );
+                    }
                     socket.emit('recmd' , msg , function(receipt)
                     {
                         if (test) {
