@@ -107,7 +107,7 @@ Please note this feature is turn off by default.  Now you can pass this two opti
         // please note this is enable by default unless pass as false
         // the use case is to have another client to talk to this
         // namespace to know if this webserver is running or not
-        connectionNamespace: '/iodebuggerconnection'
+        connectionNamespace: '/iodebugger'
     }
 ```
 

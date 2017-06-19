@@ -91,7 +91,7 @@ module.exports = function(options) {
     ioDebugger: {
         enable: true, // turn on by default otherwise they wouldn't be using this version anyway
         namespace: '/iodebugger',
-        connectionNamespace: false, // '/iodebuggerconnection', @1.2.4 this is disabled by default 
+        connectionNamespace: false, // '/iodebuggerconnection', @1.2.4 this is disabled by default
 		js: 'iodebugger-client.js',
 		eventName: 'gulpWebserverIoError',
         client: true, // allow passing a configuration to overwrite the client
@@ -208,7 +208,6 @@ module.exports = function(options) {
   if (config.directoryListing.enable) {
       app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
-
 
   var files = [];
 
