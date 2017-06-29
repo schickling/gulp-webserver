@@ -132,10 +132,11 @@ module.exports = function(options) {
   		if (config.open === false) return;
     	if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
       		// if this is a complete url form
-      		open(config.open);
+            var browser = config.browser || '';
+      		open(config.open , browser);
       		return;
     	}
-    	open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : ''));
+    	open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port , (typeof config.open === 'string' ? config.open : ''));
   };
 
   var lrServer;
