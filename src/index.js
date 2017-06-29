@@ -1,3 +1,5 @@
+'use strict';
+
 var through = require('through2');
 var gutil = require('gulp-util');
 var http = require('http');
@@ -37,14 +39,12 @@ module.exports = function(options) {
      * BASIC DEFAULTS
      *
      **/
-
     host: 'localhost',
     port: 8000,
     path: '/',
     fallback: false,
     https: false,
     open: false,
-
     /**
      *
      * MIDDLEWARE DEFAULTS
@@ -58,7 +58,6 @@ module.exports = function(options) {
      *    });
      *
      */
-
     // Middleware: Livereload
     livereload: {
         enable: false,
@@ -128,6 +127,8 @@ module.exports = function(options) {
   }
 
   var app = connect();
+  // make this global accessible
+  var urlToOpen = '';
 
   var openInBrowser = function() {
   		if (config.open === false) {
@@ -142,15 +143,19 @@ module.exports = function(options) {
                 openMsg += ' with browser ' + config.browser;
             }
             console.log(colors.white( openMsg + ']' ));
-            open(config.open , browser);
+            urlToOpen = config.open;
+            open(urlToOpen , browser);
       		return;
     	}
         // when it gets here the open becomes the target file instead
-        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : '');
+        urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port;
+
         var browser = (typeof config.browser === 'string' ? config.browser : '');
         openMsg += urlToOpen + (browser==='' ? '' : ' with browser ' + config.browser);
+
         console.log(colors.white( openMsg + ']' ));
-    	open(urlToOpen , browser);
+
+        open(urlToOpen + (typeof config.open === 'string' ? config.open : '') , browser);
   };
 
   var lrServer;
@@ -223,14 +228,29 @@ module.exports = function(options) {
   if (config.directoryListing.enable) {
       app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
-
+  /**
+   * @2017-06-29
+   * add new option to force the header have a hell of time with all the red flags about the CORS crap
+   */
+  var setHeaders = function(res , path)
+  {
+      if (urlToOpen && urlToOpen.indexOf('http') === 0) {
+          res.setHeaders('Access-Control-Allow-Origin' , urlToOpen);
+      }
+      res.setHeaders('Access-Control-Request-Method' , '*');
+      res.setHeaders('Access-Control-Allow-Methods' , 'OPTIONS , GET , POST , PUT');
+      res.setHeaders('Access-Control-Allow-Headers' , 'authorization, content-type');
+  };
+  // store the files for ?
   var files = [];
-
   // Create server
   var stream = through.obj(function(file, enc, callback) {
-
-  		app.use(config.path, serveStatic(file.path));
-
+  		app.use(
+            config.path ,
+            serveStatic(file.path , {
+                'setHeaders': setHeaders
+            })
+        );
     	if (config.livereload.enable) {
       		var watchOptions = {
         		ignoreDotFiles: true,
@@ -246,9 +266,9 @@ module.exports = function(options) {
     	}
     	this.push(file);
     	callback();
-  })
-  .on('data', function(f){files.push(f);})
-  .on('end', function(){
+  }).on('data', function(f) {
+      files.push(f);
+  }).on('end', function() {
   		if (config.fallback) {
       		files.forEach(function(file){
         		var fallbackFile = file.path + '/' + config.fallback;
