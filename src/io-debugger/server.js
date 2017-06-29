@@ -47,7 +47,6 @@ module.exports = function(config , server , logger)
 
     var io = require('socket.io')(server , socketConfig);
 	var keys = ['browser' , 'location'];
-
     /*
     var debugDisplay = function()
     {
@@ -59,9 +58,9 @@ module.exports = function(config , server , logger)
     /*
     There is a problem with this setting that cause the whole thing stop working!
     */
-
     // show if this is running
-    console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running ') + colors.white(config.version));
+    console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running') + colors.white(config.version));
+    console.log(colors.white('[ioDebugger] socket server:') , server , socketConfig);
     // run
     var namespace = io.of(config.ioDebugger.namespace);
     // start

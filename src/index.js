@@ -79,7 +79,9 @@ module.exports = function(options) {
         path: './',
         options: undefined
     },
-
+    headers: {
+        // for overwrite
+    },
     // Middleware: Proxy
     // For possible options, see:
     //  https://github.com/andrewrk/connect-proxy
@@ -243,14 +245,16 @@ module.exports = function(options) {
    */
   var setHeaders = function(res , path)
   {
-      if (urlToOpen && urlToOpen.indexOf('http') === 0) {
+      if (isString(config.headers.origin) || (urlToOpen && urlToOpen.indexOf('http') === 0)) {
           var origin = isString(config.headers.origin) || ( isString(urlToOpen) || '*' );
           res.setHeader('Access-Control-Allow-Origin' , origin);
       }
       var requestMethod = isString(config.headers.requestMethod) || '*';
       res.setHeader('Access-Control-Request-Method' , requestMethod);
+
       var allowMethods = isString(config.headers.allowMethods) || 'GET , POST , PUT , DELETE , OPTIONS';
       res.setHeader('Access-Control-Allow-Methods' , allowMethods);
+
       var allowHeaders = isString(config.headers.allowHeaders) || 'Content-Type, Authorization, Content-Length, X-Requested-With';
       res.setHeader('Access-Control-Allow-Headers' , allowHeaders);
   };
@@ -299,7 +303,6 @@ module.exports = function(options) {
 
   if (config.https) {
     	var opts;
-
     	if (config.https.pfx) {
       		opts = {
         		pfx: fs.readFileSync(config.https.pfx),
