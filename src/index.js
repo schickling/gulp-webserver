@@ -146,7 +146,7 @@ module.exports = function(options) {
       		return;
     	}
         // when it gets here the open becomes the target file instead
-        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open || '');
+        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open : '');
         var browser = (typeof config.browser === 'string' ? config.browser : '');
         openMsg += urlToOpen + (browser==='' ? '' : ' with browser ' + config.browser);
         console.log(colors.white( openMsg + ']' ));
