@@ -235,11 +235,11 @@ module.exports = function(options) {
   var setHeaders = function(res , path)
   {
       if (urlToOpen && urlToOpen.indexOf('http') === 0) {
-          res.setHeaders('Access-Control-Allow-Origin' , urlToOpen);
+          res.setHeader('Access-Control-Allow-Origin' , urlToOpen);
       }
-      res.setHeaders('Access-Control-Request-Method' , '*');
-      res.setHeaders('Access-Control-Allow-Methods' , 'OPTIONS , GET , POST , PUT');
-      res.setHeaders('Access-Control-Allow-Headers' , 'authorization, content-type');
+      res.setHeader('Access-Control-Request-Method' , '*');
+      res.setHeader('Access-Control-Allow-Methods' , 'OPTIONS , GET , POST , PUT');
+      res.setHeader('Access-Control-Allow-Headers' , 'authorization, content-type');
   };
   // store the files for ?
   var files = [];
