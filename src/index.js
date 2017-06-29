@@ -124,7 +124,7 @@ module.exports = function(options) {
   if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
       // ensure leading slash if this is NOT a complete url form
       config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
-      console.log(colors.white('[debug config.open]') , config.open);
+      // console.log(colors.white('[debug config.open]') , config.open);
   }
 
   var app = connect();
@@ -141,14 +141,15 @@ module.exports = function(options) {
             if (browser!=='') {
                 openMsg += ' with browser ' + config.browser;
             }
-            console.log(openMsg + ']');
+            console.log(colors.white( openMsg + ']' ));
             open(config.open , browser);
       		return;
     	}
-        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port;
+        // when it gets here the open becomes the target file instead
+        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port + (typeof config.open === 'string' ? config.open || '');
         var browser = (typeof config.browser === 'string' ? config.browser : '');
         openMsg += urlToOpen + (browser==='' ? '' : ' with browser ' + config.browser);
-        console.log(openMsg + ']');
+        console.log(colors.white( openMsg + ']' ));
     	open(urlToOpen , browser);
   };
 
