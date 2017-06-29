@@ -228,6 +228,15 @@ module.exports = function(options) {
   if (config.directoryListing.enable) {
       app.use(config.path, serveIndex(path.resolve(config.directoryListing.path), config.directoryListing.options));
   }
+
+  var isString = function(opt)
+  {
+      if (typeof opt === 'string') {
+          return opt;
+      }
+      return false;
+  };
+
   /**
    * @2017-06-29
    * add new option to force the header have a hell of time with all the red flags about the CORS crap
@@ -235,11 +244,15 @@ module.exports = function(options) {
   var setHeaders = function(res , path)
   {
       if (urlToOpen && urlToOpen.indexOf('http') === 0) {
-          res.setHeader('Access-Control-Allow-Origin' , urlToOpen);
+          var origin = isString(config.headers.origin) || ( isString(urlToOpen) || '*' );
+          res.setHeader('Access-Control-Allow-Origin' , origin);
       }
-      res.setHeader('Access-Control-Request-Method' , '*');
-      res.setHeader('Access-Control-Allow-Methods' , 'OPTIONS , GET , POST , PUT');
-      res.setHeader('Access-Control-Allow-Headers' , 'authorization, content-type');
+      var requestMethod = isString(config.headers.requestMethod) || '*';
+      res.setHeader('Access-Control-Request-Method' , requestMethod);
+      var allowMethods = isString(config.headers.allowMethods) || 'GET , POST , PUT , DELETE , OPTIONS';
+      res.setHeader('Access-Control-Allow-Methods' , allowMethods);
+      var allowHeaders = isString(config.headers.allowHeaders) || 'Content-Type, Authorization, Content-Length, X-Requested-With';
+      res.setHeader('Access-Control-Allow-Headers' , allowHeaders);
   };
   // store the files for ?
   var files = [];
