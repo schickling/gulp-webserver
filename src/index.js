@@ -14,7 +14,7 @@ var path = require('path');
 var open = require('open');
 var url = require('url');
 var extend = require('node.extend');
-var isarray = require('isarray');
+var isarray = Array.isArray;
 var colors = require('colors');
 // gulp-webserver script
 var enableMiddlewareShorthand = require('./enableMiddlewareShorthand');

@@ -4,7 +4,6 @@
 // var io = require('socket.io');
 var colors = require('colors');
 var util = require('util');
-var isarray = require('isarray');
 var EventEmitter = require('events');
 /**
  * just getting some color configuration
@@ -36,7 +35,17 @@ var getColor = function(data)
  */
 module.exports = function(config , server , logger)
 {
-    var io = require('socket.io')(server);
+    var socketConfig = null;
+
+    if (typeof config.ioDebugger.server === 'object') {
+        if (config.ioDebugger.server.socketOnly) {
+            socketConfig = (config.ioDebugger.server.transportConfig && Array.isArray(config.ioDebugger.server.transportConfig))
+                         ? config.ioDebugger.server.transportConfig
+                         : ['websocket'];
+        }
+    }
+
+    var io = require('socket.io')(server , socketConfig);
 	var keys = ['browser' , 'location'];
 
     /*
@@ -50,15 +59,7 @@ module.exports = function(config , server , logger)
     /*
     There is a problem with this setting that cause the whole thing stop working!
     */
-    if (typeof config.ioDebugger.server === 'object') {
-        if (config.ioDebugger.server.socketOnly) {
-            var transports = (config.ioDebugger.server.transportConfig && isarray(config.ioDebugger.server.transportConfig))
-                           ? config.ioDebugger.server.transportConfig
-                           : ['websocket'];
 
-            io.set('transports' , transports);
-        }
-    }
     // show if this is running
     console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running ') + colors.white(config.version));
     // run
