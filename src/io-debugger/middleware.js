@@ -39,16 +39,12 @@ module.exports = function(config)
                                                .replace('{ping}' , ping);
                 // force websocket connection
                 // see: http://stackoverflow.com/questions/8970880/cross-domain-connection-in-socket-io
-                var connectionOptions = '';
+                // @2017-06-29 forcing the connection to socket only because it just serving up local!
+                var connectionOptions = ", {'force new connection': false , 'transports': ['websocket']}";
 
                 if (typeof config.ioDebugger.server === 'object') {
-                    if (config.ioDebugger.server.socketOnly) {
-                        if (config.ioDebugger.server.clientConnectionOptions && typeof config.ioDebugger.server.clientConnectionOptions === 'object') {
-                            connectionOptions = ", " + JSON.stringify(config.ioDebugger.server.clientConnectionOptions);
-                        }
-                        else {
-                            connectionOptions = ", {'force new connection': true , 'reconnectionAttempts': 'Infinity' , 'timeout': 10000 , 'transports': ['websocket']}";
-                        }
+                    if (config.ioDebugger.server.clientConnectionOptions && typeof config.ioDebugger.server.clientConnectionOptions === 'object') {
+                        connectionOptions = ", " + JSON.stringify(config.ioDebugger.server.clientConnectionOptions);
                     }
                 }
 

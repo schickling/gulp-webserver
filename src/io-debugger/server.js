@@ -136,6 +136,8 @@ module.exports = function(config , server , logger)
     });
     // end configurable name space
 
+    // @TODO @2016-06-29 going to remove this lot because it wasn't working 
+
     // this new namespace is for allowing a third party client to connect to this io server
     // to get an idea if it's running or not
     if (config.ioDebugger.connectionNamespace !== undefined && config.ioDebugger.connectionNamespace !== false) {
