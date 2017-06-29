@@ -60,7 +60,9 @@ module.exports = function(config , server , logger)
     */
     // show if this is running
     console.log(colors.white('[ioDebugger] ') + colors.yellow('server is running') + colors.white(config.version));
-    console.log(colors.white('[ioDebugger] socket server:') , server , socketConfig);
+    if (config.ioDebugger.debugSocket) {
+        console.log(colors.white('[ioDebugger] socket server:') , server , socketConfig);
+    }
     // run
     var namespace = io.of(config.ioDebugger.namespace);
     // start
