@@ -124,19 +124,32 @@ module.exports = function(options) {
   if (typeof config.open === 'string' && config.open.length > 0 && config.open.indexOf('http') !== 0) {
       // ensure leading slash if this is NOT a complete url form
       config.open = (config.open.indexOf('/') !== 0 ? '/' : '') + config.open;
+      console.log(colors.white('[debug config.open]') , config.open);
   }
 
   var app = connect();
 
   var openInBrowser = function() {
-  		if (config.open === false) return;
+  		if (config.open === false) {
+            return;
+        }
+        var openMsg = '[Open ';
     	if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
       		// if this is a complete url form
             var browser = config.browser || '';
-      		open(config.open , browser);
+            openMsg += config.open;
+            if (browser!=='') {
+                openMsg += ' with browser ' + config.browser;
+            }
+            console.log(openMsg + ']');
+            open(config.open , browser);
       		return;
     	}
-    	open('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port , (typeof config.open === 'string' ? config.open : ''));
+        var urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port;
+        var browser = (typeof config.browser === 'string' ? config.browser : '');
+        openMsg += urlToOpen + (browser==='' ? '' : ' with browser ' + config.browser);
+        console.log(openMsg + ']');
+    	open(urlToOpen , browser);
   };
 
   var lrServer;
