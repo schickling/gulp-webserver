@@ -31,10 +31,13 @@ module.exports = function(config)
                 }
                 // if they want to ping the server back on init
                 var ping = (typeof opts.client === 'object' && opts.client.ping) ? 'true' : 'false';
+                // there is a problem when the server is running from localhost
+                // and serving out to the proxy and the two ip address are not related to each other
+                // and for most of the cases, the client is always pointing back to itself anyway
+                // [OLD] .replace('{host}' , debuggerHost).replace('{port}' , debuggerPort)
+                // var serverHostPath = 'http://{debuggerHost}:{debuggerPort}';
                 // search and replace
-                var serveData = data.toString().replace('{host}' , debuggerHost)
-											   .replace('{port}' , debuggerPort)
-											   .replace('{debuggerPath}' , debuggerPath)
+                var serveData = data.toString().replace('{debuggerPath}' , debuggerPath)
 											   .replace('{eventName}' , debuggerEventName)
                                                .replace('{ping}' , ping);
                 // force websocket connection

@@ -5,7 +5,7 @@
 	 * create a global $gulpWebserverIo namespace to hold everything
 	 */
     window.$gulpWebserverIo = {
-        server: io.connect('http://{host}:{port}{debuggerPath}'{connectionOptions}),
+        server: io.connect('{debuggerPath}'{connectionOptions}),
         eventName: '{eventName}'
     };
 

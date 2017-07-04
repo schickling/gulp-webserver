@@ -97,9 +97,11 @@ Please check the [wiki](https://github.com/joelchu/gulp-webserver-io/wiki) for m
 
 ## NEW FEATURE @ 1.2.X
 
-I have added a new feature to allow you to retrieve the underlying socket.io object and a separate namespace.
+This feature will be discontinue in 1.3.X. 
 
-Please note this feature is turn off by default.  Now you can pass this two options
+~~I have added a new feature to allow you to retrieve the underlying socket.io object and a separate namespace.
+
+Please note this feature is turn off by default.  Now you can pass this two options~~
 
 ```javascript
     ioDebugger: {

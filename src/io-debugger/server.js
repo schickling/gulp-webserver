@@ -29,7 +29,6 @@ var getColor = function(data)
             return dc;
     }
 };
-
 /**
  * main
  */
@@ -133,109 +132,107 @@ module.exports = function(config , server , logger)
 				);
 			}
         });
-    });
-    // end configurable name space
-
-    // @TODO @2016-06-29 going to remove this lot because it wasn't working 
-
-    // this new namespace is for allowing a third party client to connect to this io server
-    // to get an idea if it's running or not
-    if (config.ioDebugger.connectionNamespace !== undefined && config.ioDebugger.connectionNamespace !== false) {
-        // force it to be a string
-        var ns = config.ioDebugger.connectionNamespace + '';
-        if (ns.substr(0,1)!=='/') {
-            ns = '/' + ns;
-        }
-        // setup
-        var internalNamespace = io.of(ns);
-        var test = false;
-        var ioEmitter = false;
-        console.log(
-            colors.white('[ioDebugger]') ,
-            colors.yellow('namespace: ' + ns)
-        );
-
-        if (config.ioDebugger.connectionNamespaceCallbackTest === true) {
-            console.log(
-                colors.white('[ioDebugger]'),
-                colors.yellow('connection name space running in test mode')
-            );
-            test = true;
-        }
-
-        if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
-            /**
-             * here is the problem with the delivery the message outside
-             * we couldn't pass this io object - the connection was made
-             * but the client never able to response to anything.
-             * what if we create an event emitter and see what happen then
-             */
-            class MyEmitter extends EventEmitter {}
-            const emitterInstance = new MyEmitter();
-            // increase the listener amount to stop that memory leak warning
-            ioEmitter = emitterInstance.setMaxListeners(100);
-            config.ioDebugger.connectionNamespaceCallback(ioEmitter);
-            ioEmitter.emit('test connection' , 'message from ' + ns);
-        }
-        // start the connection
-        internalNamespace.on('connection' , function(socket)
-        {
-            socket.emit('reply' , 'I am running');
-            // rename to shout , because ping / pong are reserved
-            socket.on('shoutat' , function(msg , fn)
-            {
-                // callback
-                fn((new Date()).toUTCString());
-                // pong
-                socket.emit('shoutback' , msg);
-            });
-
-            socket.on('cmd' , function(msg , fn)
-            {
-                if (test) {
-                    console.log(
-                        colors.white('[ioDebugger]'),
-                        ns + ' received a cmd',
-                        msg
-                    );
-                }
-                if (ioEmitter) {
-                    ioEmitter.emit('cmd' , msg);
-                }
-                fn( ( new Date() ).toUTCString() );
-            });
-
-            if (ioEmitter) {
-                ioEmitter.on('cmd' , function(msg)
-                {
-                    if (test) {
-                        console.log(
-                            colors.white('[ioDebugger]'),
-                            'received cmd from ioEmitter',
-                            msg
-                        );
-                    }
-                    ioEmitter.emit('reply' , 'got your cmd');
-                    // @2017-01-11 this is still not working
-                    socket.emit('recmd' , msg , function(receipt)
-                    {
-                        if (test) {
-                            console.log(
-                                colors.white('[ioDebugger]'),
-                                'cmd to remote receipt',
-                                receipt
-                            );
-                        }
-                        ioEmitter.emit('reply' , 'got receipt back from remote server');
-                    });
-                });
-            }
-        });
-        // when we use this name space then return this one
-        return internalNamespace;
-    }
+    }); // end configurable name space
 
     // finally we return the io object just the name space
     return namespace;
 };
+/*
+// this new namespace is for allowing a third party client to connect to this io server
+// to get an idea if it's running or not
+if (config.ioDebugger.connectionNamespace !== undefined && config.ioDebugger.connectionNamespace !== false) {
+    // force it to be a string
+    var ns = config.ioDebugger.connectionNamespace + '';
+    if (ns.substr(0,1)!=='/') {
+        ns = '/' + ns;
+    }
+    // setup
+    var internalNamespace = io.of(ns);
+    var test = false;
+    var ioEmitter = false;
+    console.log(
+        colors.white('[ioDebugger]') ,
+        colors.yellow('namespace: ' + ns)
+    );
+
+    if (config.ioDebugger.connectionNamespaceCallbackTest === true) {
+        console.log(
+            colors.white('[ioDebugger]'),
+            colors.yellow('connection name space running in test mode')
+        );
+        test = true;
+    }
+
+    if (typeof config.ioDebugger.connectionNamespaceCallback === 'function') {
+        **
+         * here is the problem with the delivery the message outside
+         * we couldn't pass this io object - the connection was made
+         * but the client never able to response to anything.
+         * what if we create an event emitter and see what happen then
+
+        class MyEmitter extends EventEmitter {}
+        const emitterInstance = new MyEmitter();
+        // increase the listener amount to stop that memory leak warning
+        ioEmitter = emitterInstance.setMaxListeners(100);
+        config.ioDebugger.connectionNamespaceCallback(ioEmitter);
+        ioEmitter.emit('test connection' , 'message from ' + ns);
+    }
+    // start the connection
+    internalNamespace.on('connection' , function(socket)
+    {
+        socket.emit('reply' , 'I am running');
+        // rename to shout , because ping / pong are reserved
+        socket.on('shoutat' , function(msg , fn)
+        {
+            // callback
+            fn((new Date()).toUTCString());
+            // pong
+            socket.emit('shoutback' , msg);
+        });
+
+        socket.on('cmd' , function(msg , fn)
+        {
+            if (test) {
+                console.log(
+                    colors.white('[ioDebugger]'),
+                    ns + ' received a cmd',
+                    msg
+                );
+            }
+            if (ioEmitter) {
+                ioEmitter.emit('cmd' , msg);
+            }
+            fn( ( new Date() ).toUTCString() );
+        });
+
+        if (ioEmitter) {
+            ioEmitter.on('cmd' , function(msg)
+            {
+                if (test) {
+                    console.log(
+                        colors.white('[ioDebugger]'),
+                        'received cmd from ioEmitter',
+                        msg
+                    );
+                }
+                ioEmitter.emit('reply' , 'got your cmd');
+                // @2017-01-11 this is still not working
+                socket.emit('recmd' , msg , function(receipt)
+                {
+                    if (test) {
+                        console.log(
+                            colors.white('[ioDebugger]'),
+                            'cmd to remote receipt',
+                            receipt
+                        );
+                    }
+                    ioEmitter.emit('reply' , 'got receipt back from remote server');
+                });
+            });
+        }
+    });
+    // when we use this name space then return this one
+    return internalNamespace;
+}
+*/
 // EOF
