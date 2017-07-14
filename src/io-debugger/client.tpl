@@ -50,21 +50,18 @@
         }
     });
 
-    /*
-    var stack = e.error.stack;
-    var message = e.error.toString();
-    if (stack) {
-        message += '\n' + stack;
-    }
-    */
-
     /**
      * core implementation
      */
     window.addEventListener('error', function (e)
     {
+        var stack = getStackTrace();
+        var message = [e.error.toString()];
+        if (stack.length) {
+            message = message.concat(stack);
+        }
         send({
-            msg: getStackTrace() ,
+            msg:  message,
             from: 'error' ,
             color: 'debug'
         });
