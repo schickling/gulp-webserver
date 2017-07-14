@@ -39,7 +39,9 @@ describe('gulp-webserver-io stock test', () => {
 
   // (1) test with basic options
   test('(1) should work with default options', () => {
-    stream = webserver();
+    stream = webserver({
+        ioDebugger: false
+    });
     stream.write(rootDir);
     return request(
         defaultUrl
@@ -54,7 +56,8 @@ describe('gulp-webserver-io stock test', () => {
   {
       const test2port = 1111;
     stream = webserver({
-        port: test2port
+        port: test2port,
+        ioDebugger: false
     });
     stream.write(rootDir);
     return request(
@@ -70,7 +73,8 @@ describe('gulp-webserver-io stock test', () => {
   {
       const test3host = '0.0.0.0';
       stream = webserver({
-          host: test3host
+          host: test3host,
+          ioDebugger: false
       });
       stream.write(rootDir);
 
@@ -83,7 +87,8 @@ describe('gulp-webserver-io stock test', () => {
   {
       const test4path = '/custom/path';
       stream = webserver({
-        path: test4path
+        path: test4path,
+        ioDebugger: false
       });
 
       stream.write(rootDir);
@@ -96,7 +101,8 @@ describe('gulp-webserver-io stock test', () => {
   test('(5) should work with https' , () =>
   {
       stream = webserver({
-        https: true
+        https: true,
+        ioDebugger: false
       });
 
       stream.write(rootDir);
@@ -109,6 +115,7 @@ describe('gulp-webserver-io stock test', () => {
   test('(6) should work with https and custom certificate' , () =>
   {
       stream = webserver({
+        ioDebugger: false,
         https: {
           key: join(__dirname , '..','ssl','dev-key.pem'),
           cert: join(__dirname , '..' , 'ssl' , 'dev-cert.pem')
@@ -125,6 +132,7 @@ describe('gulp-webserver-io stock test', () => {
   test('(7) should fallback to default.html' , () =>
   {
       stream = webserver({
+          ioDebugger: false,
         fallback: 'default.html'
       });
 
@@ -140,6 +148,7 @@ describe('gulp-webserver-io stock test', () => {
   test('(8) should server multiple sources even with a fallback' , () =>
   {
       stream = webserver({
+          ioDebugger: false,
         fallback: 'default.html'
       });
 
@@ -160,6 +169,7 @@ describe('gulp-webserver-io stock test', () => {
   test('(9) should show a directory listing when the shorthand settings is enabled' , () =>
   {
       stream = webserver({
+          ioDebugger: false,
         directoryListing: true
       });
 
@@ -176,6 +186,7 @@ describe('gulp-webserver-io stock test', () => {
   {
       const test10port = 35729;
       stream = webserver({
+          ioDebugger: false,
         livereload: {
             enable:true,
             port: test10port

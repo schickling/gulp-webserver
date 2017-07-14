@@ -35,6 +35,7 @@ describe('gulp-webserver-io middleware test' , () =>
     {
         const testPath = '/middleware';
         stream = webserver({
+            ioDebugger: false,
             middleware: (req , res , next) =>
             {
                 if (req.url === testPath) {
@@ -59,6 +60,7 @@ describe('gulp-webserver-io middleware test' , () =>
     {
         const testPaths = ['middleware1' , 'middleware2'];
         stream = webserver({
+            ioDebugger: false,
             middleware: [
                 function(req , res , next)
                 {
