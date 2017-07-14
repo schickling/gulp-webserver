@@ -1,7 +1,9 @@
+/* eslint complexity: "off" */
 'use strict';
 /**
 * The new main file (use to be the index.js )
 */
+const through = require('through2');
 const http = require('http');
 const https = require('https');
 const connect = require('connect');
@@ -22,10 +24,10 @@ const enableMiddlewareShorthand = require('./enableMiddlewareShorthand/index.js'
 const ioDebuggerInjection = require('./io-debugger/injection.js');
 const ioDebuggerServer = require('./io-debugger/server.js');
 const ioDebuggerClient = require('./io-debugger/middleware.js');
-// useful tools
-const utilLog = require('./lib/log.js');
+// Useful tools
+const logutil = require('./lib/log.js');
 const helper = require('./lib/helper.js');
-// version for display
+// Version for display
 const version = require('../package.json').version;
 /**
  * Main
@@ -169,7 +171,7 @@ module.exports = function (options) {
   // Proxy requests @TODO need testing
   config.proxies.forEach(proxyoptions => {
     if (!proxyoptions.target) {
-      utilLog(chalk.red('MISSING target property for proxy setting!'));
+      logutil(chalk.red('MISSING target property for proxy setting!'));
       return; // ignore!
     }
     let source = proxyoptions.source;
@@ -196,7 +198,7 @@ module.exports = function (options) {
     app.use(
       config.path,
       serveStatic(file.path, {
-        setHeaders: helper.setHeaders(config , urlToOpen)
+        setHeaders: helper.setHeaders(config, urlToOpen)
       })
     );
     if (config.livereload.enable) {
@@ -229,7 +231,7 @@ module.exports = function (options) {
       });
     }
   });
-  // start another part
+  // Start another part
   let webserver = null;
   if (config.https) {
     let opts;
@@ -244,9 +246,9 @@ module.exports = function (options) {
         cert: fs.readFileSync(config.https.cert || join(__dirname, '..', 'ssl', 'dev-cert.pem'))
       };
     }
-    webserver = https.createServer(opts, app).listen(config.port, config.host, helper.openInBrowser(config) );
+    webserver = https.createServer(opts, app).listen(config.port, config.host, helper.openInBrowser(config));
   } else {
-    webserver = http.createServer(app).listen(config.port, config.host, helper.openInBrowser(config) );
+    webserver = http.createServer(app).listen(config.port, config.host, helper.openInBrowser(config));
   }
   // Init our socket.io server
   let socket = null;
