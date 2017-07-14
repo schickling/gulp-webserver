@@ -29,11 +29,12 @@ afterEach(() => {
     stream = undefined;
 });
 
+/*
 afterAll( () =>
 {
     log(chalk.yellow('everything done afterAll callback'));
 });
-
+*/
 describe('gulp-webserver-io stock test', () => {
 
   // (1) test with basic options
