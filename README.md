@@ -282,3 +282,10 @@ stream.emit('kill');
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
+
+[npm-image]: https://badge.fury.io/js/gulp-webserver-io.svg
+[npm-url]: https://npmjs.org/package/gulp-webserver-io
+[travis-image]: https://travis-ci.org/joelchu/gulp-webserver-io.svg?branch=master
+[travis-url]: https://travis-ci.org/joelchu/gulp-webserver-io
+[daviddm-image]: https://david-dm.org/joelchu/gulp-webserver-io.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/joelchu/gulp-webserver-io
