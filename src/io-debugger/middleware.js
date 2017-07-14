@@ -6,7 +6,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 const join = require('path').join;
 // Const gutil = require('gulp-util');
-const logutil = require('../log.js');
+const logutil = require('../lib/log.js');
 
 module.exports = function (config) {
   const opts = config.ioDebugger;

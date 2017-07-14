@@ -4,10 +4,7 @@
  */
 const util = require('util');
 const chalk = require('chalk');
-// Const gutil = require('gulp-util');
-const logutil = require('../log.js');
-
-// Const EventEmitter = require('events');
+const logutil = require('../lib/log.js');
 /**
  * Just getting some color configuration
  */
@@ -34,7 +31,7 @@ const getColor = function (data) {
 /**
  * IoDebuggerServer
  * @param {object} config
- * @param {object} server http/https server instance 
+ * @param {object} server http/https server instance
  * @param {function} logger
  */
 module.exports = function (config, server, logger) {

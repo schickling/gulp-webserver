@@ -1,6 +1,5 @@
 /* eslint no-useless-escape: 0 */
 'use strict';
-// Const gutil = require('gulp-util');
 /**
 * Taking the idea from livereload and inject our socket.io and io-debugger-client file on the fly
 */

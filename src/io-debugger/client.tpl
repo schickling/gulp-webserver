@@ -1,6 +1,25 @@
 (function(window , navigator)
 {
     'use strict';
+
+    /**
+     * from https://stackoverflow.com/questions/6715571/how-to-get-result-of-console-trace-as-string-in-javascript-with-chrome-or-fire
+     */
+    var getStackTrace = function()
+    {
+        var stack;
+        try {
+            throw new Error('');
+        }
+        catch (error) {
+            stack = error.stack || '';
+        }
+        stack = stack.split('\n').map(function (line) {
+            return line.trim();
+        });
+        return stack.splice(stack[0] == 'Error' ? 2 : 1);
+    };
+
 	/**
 	 * create a global $gulpWebserverIo namespace to hold everything
 	 */
@@ -31,17 +50,24 @@
         }
     });
 
+    /*
+    var stack = e.error.stack;
+    var message = e.error.toString();
+    if (stack) {
+        message += '\n' + stack;
+    }
+    */
+
     /**
      * core implementation
      */
     window.addEventListener('error', function (e)
     {
-		var stack = e.error.stack;
-        var message = e.error.toString();
-        if (stack) {
-            message += '\n' + stack;
-        }
-        send({msg: message , from: 'error' , color: 'debug'});
+        send({
+            msg: getStackTrace() ,
+            from: 'error' ,
+            color: 'debug'
+        });
     });
 
 })(window , navigator);

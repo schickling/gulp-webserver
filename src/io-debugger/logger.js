@@ -6,7 +6,7 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const chalk = require('chalk');
-const logutil = require('../log.js');
+const logutil = require('../lib/log.js');
 
 /**
  * Built-in logging method

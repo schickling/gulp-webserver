@@ -1,9 +1,7 @@
 'use strict';
 /**
-* The new top file (use to be the index.js )
+* The new main file (use to be the index.js )
 */
-const through = require('through2');
-// Const gutil = require('gulp-util');
 const http = require('http');
 const https = require('https');
 const connect = require('connect');
@@ -15,9 +13,6 @@ const watch = require('watch');
 const fs = require('fs');
 const serveIndex = require('serve-index');
 const path = require('path');
-const open = require('open');
-// Const url = require('url');
-// const extend = require('util')._extend;
 const isarray = Array.isArray;
 const join = require('path').join;
 const chalk = require('chalk');
@@ -27,23 +22,14 @@ const enableMiddlewareShorthand = require('./enableMiddlewareShorthand/index.js'
 const ioDebuggerInjection = require('./io-debugger/injection.js');
 const ioDebuggerServer = require('./io-debugger/server.js');
 const ioDebuggerClient = require('./io-debugger/middleware.js');
-
-const utilLog = require('./log.js');
-
+// useful tools
+const utilLog = require('./lib/log.js');
+const helper = require('./lib/helper.js');
+// version for display
 const version = require('../package.json').version;
-
-const getRandomInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const isString = function (opt) {
-  return (typeof opt === 'string');
-};
-
-const logutil = require('./log.js');
-
 /**
  * Main
+ * @param {object} options
  */
 module.exports = function (options) {
   let defaults = {
@@ -68,7 +54,7 @@ module.exports = function (options) {
     // Middleware: Livereload
     livereload: {
       enable: false,
-      port: getRandomInt(35000, 40000), // Should create a random number each time
+      port: helper.getRandomInt(35000, 40000), // Should create a random number each time
       filter: function (filename) {
         if (filename.match(/node_modules/)) {
           return false;
@@ -131,35 +117,8 @@ module.exports = function (options) {
   const app = connect();
   // Make this global accessible
   let urlToOpen = '';
-  /**
-    * Wrap the open call in function
-    */
-  const openInBrowser = () => {
-    if (config.open === false) {
-      return;
-    }
-    let openMsg = '[Open ';
-    if (typeof config.open === 'string' && config.open.indexOf('http') === 0) {
-      // If this is a complete url form
-      const browser = config.browser || '';
-      openMsg += config.open;
-      if (browser !== '') {
-        openMsg += ' with browser ' + config.browser;
-      }
-      logutil(chalk.white(openMsg + ']'));
-      urlToOpen = config.open;
-      open(urlToOpen, browser);
-      return;
-    }
-    // When it gets here the open becomes the target file instead
-    urlToOpen = 'http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port;
-    const browser = (typeof config.browser === 'string' ? config.browser : '');
-    openMsg += urlToOpen + (browser === '' ? '' : ' with browser ' + config.browser);
-    logutil(chalk.white(openMsg + ']'));
-    // The actual open call
-    open(urlToOpen + (typeof config.open === 'string' ? config.open : ''), browser);
-  };
   let lrServer = null;
+
   if (config.livereload.enable) {
     // Here already inject the live reload stuff so we need to figure out a different way to rewrite it
     if (config.ioDebugger.enable && config.ioDebugger.client !== false) {
@@ -215,15 +174,6 @@ module.exports = function (options) {
     }
     let source = proxyoptions.source;
     delete proxyoptions.source;
-    /*
-    Let proxyoptions = url.parse(proxy.target);
-    if ({}.hasOwnProperty.call(proxy, 'options')) {
-      extend(proxyoptions, proxy.options);
-    }
-    console.log('proxy optons', proxyoptions);
-        */
-    console.log(source, proxyoptions);
-
     app.use(
       source,
       httpProxy(proxyoptions)
@@ -239,39 +189,14 @@ module.exports = function (options) {
       )
     );
   }
-  /**
-    * @2017-06-29
-    * add new option to force the header have a hell of time with all the red flags about the CORS crap
-    * @param {object} res http response object
-    */
-  const setHeaders = function (res /* , path */) {
-    if (isString(config.headers.origin) || (urlToOpen && urlToOpen.indexOf('http') === 0)) {
-      res.setHeader(
-        'Access-Control-Allow-Origin',
-        isString(config.headers.origin) || (isString(urlToOpen) || '*')
-      );
-    }
-    res.setHeader(
-      'Access-Control-Request-Method',
-      isString(config.headers.requestMethod) || '*'
-    );
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      isString(config.headers.allowMethods) || 'GET , POST , PUT , DELETE , OPTIONS'
-    );
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      isString(config.headers.allowHeaders) || 'Content-Type, Authorization, Content-Length, X-Requested-With'
-    );
-  };
-    // Store the files for ?
+  // Store the files for ?
   let files = [];
   // Create static server
   const stream = through.obj((file, enc, callback) => {
     app.use(
       config.path,
       serveStatic(file.path, {
-        setHeaders: setHeaders
+        setHeaders: helper.setHeaders(config , urlToOpen)
       })
     );
     if (config.livereload.enable) {
@@ -304,6 +229,7 @@ module.exports = function (options) {
       });
     }
   });
+  // start another part
   let webserver = null;
   if (config.https) {
     let opts;
@@ -318,9 +244,9 @@ module.exports = function (options) {
         cert: fs.readFileSync(config.https.cert || join(__dirname, '..', 'ssl', 'dev-cert.pem'))
       };
     }
-    webserver = https.createServer(opts, app).listen(config.port, config.host, openInBrowser);
+    webserver = https.createServer(opts, app).listen(config.port, config.host, helper.openInBrowser(config) );
   } else {
-    webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
+    webserver = http.createServer(app).listen(config.port, config.host, helper.openInBrowser(config) );
   }
   // Init our socket.io server
   let socket = null;
@@ -340,6 +266,7 @@ module.exports = function (options) {
   }
 
   logutil('Webserver started at', chalk.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
+
   stream.on('kill', () => {
     // Console.log('kill issued');
     webserver.close();
