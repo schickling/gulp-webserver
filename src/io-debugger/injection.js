@@ -33,7 +33,8 @@ module.exports = function (config, opt) {
     const hostname = opt.hostname || 'localhost';
     const port = opt.port || 35729;
     const src = opt.src || '//\' + (location.hostname || \'' + hostname + '\') + \':' + port + '/livereload.js?snipver=1';
-    snippet = '\n<script>//<![CDATA[\ndocument.write(\'<script src="' + src + '"><\\/script>\')\n//]]></script>\n' + debuggerSnippet;
+    // @2017-07-25 move the reload script after the ioDebugger script
+    snippet = debuggerSnippet + '\n<script>//<![CDATA[\ndocument.write(\'<script src="' + src + '"><\\/script>\')\n//]]></script>\n';
   } else {
     snippet = '\n' + debuggerSnippet;
   }
