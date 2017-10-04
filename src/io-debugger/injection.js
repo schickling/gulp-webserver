@@ -9,9 +9,10 @@ module.exports = function (config, opt) {
   const ignore = opt.ignore || opt.excludeList || [/\.js$/, /\.css$/, /\.svg$/, /\.ico$/, /\.woff$/, /\.png$/, /\.jpg$/, /\.jpeg$/];
   const include = opt.include || [/.*/];
   const html = opt.html || _html;
+  // const tagName = 'head'; // or body
   // This is the important part to determine how the script get inserted into the page
   const rules = opt.rules || [{
-    match: /<\/body>(?![\s\S]*<\/body>)/i, // @2017-07-13 change from head to body
+    match: /<\/head>(?![\s\S]*<\/head>)/i, // @2017-07-13 change from head to body
     fn: prepend
   }];
 
