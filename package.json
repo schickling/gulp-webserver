@@ -32,6 +32,11 @@
     "socket.io-client": "^2.0.3",
     "supertest": "^3.0.0"
   },
+  "files": [
+    "src",
+    "ssl",
+    "bin"
+  ],
   "dependencies": {
     "chalk": "^2.0.1",
     "connect": "^3.6.2",

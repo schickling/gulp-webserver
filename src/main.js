@@ -1,5 +1,5 @@
 /* eslint complexity: "off" */
 'use strict';
 const streamServer = require('./server.js');
-// default export
+// Default export
 module.exports = streamServer;
