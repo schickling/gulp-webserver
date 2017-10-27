@@ -15,6 +15,6 @@
   "author": "NEWBRAN.CH",
   "license": "MIT",
   "dependencies": {
-    "gulp": "gulpjs/gulp.git#4.0"
+    "gulp-4.0.build": "^4.0.0-build.a271520"
   }
 }
