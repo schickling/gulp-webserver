@@ -209,16 +209,13 @@ module.exports = function (options) {
     'Webserver started at',
     chalk.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port)
   );
-
+  // When ctrl-c or stream.emit('kill')
   stream.on('kill', () => {
-    // Console.log('kill issued');
     webserver.close();
-    if (config.livereload.enable) {
-      // Console.log('livereload close called');
+    if (lrServer) {
       lrServer.close();
     }
-    if (config.ioDebugger.enable) {
-      // Console.log('iodebugger socket close called');
+    if (socket && socket.server) {
       socket.server.close();
     }
   });
