@@ -1,7 +1,7 @@
 /**
- * create a default options to reduce the complexity of the main file
+ * Create a default options to reduce the complexity of the main file
  */
-const { getRandomInt } = require('./helper.js');
+const {getRandomInt} = require('./helper.js');
 
 module.exports = {
   /**
@@ -25,7 +25,7 @@ module.exports = {
   livereload: {
     enable: false,
     port: getRandomInt(35000, 40000), // Should create a random number each time
-    filter: function(filename) => {
+    filter: function (filename) {
       if (filename.match(/node_modules/)) {
         return false;
       }

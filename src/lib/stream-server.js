@@ -10,7 +10,6 @@ const connect = require('connect');
 const serveStatic = require('serve-static');
 const connectLivereload = require('connect-livereload');
 const httpProxy = require('http-proxy-middleware'); // @2017-07-12 changed
-const tinyLr = require('tiny-lr');
 const watch = require('watch');
 const fs = require('fs');
 const serveIndex = require('serve-index');
@@ -21,17 +20,22 @@ const isarray = Array.isArray;
 const join = require('path').join;
 
 // Gulp-webserver script
-const enableMiddlewareShorthand = require('./enableMiddlewareShorthand/index.js');
+const enableMiddlewareShorthand = require('../enableMiddlewareShorthand/index.js');
 // IoDebugger scripts
-const ioDebuggerInjection = require('./io-debugger/injection.js');
-const ioDebuggerServer = require('./io-debugger/server.js');
-const ioDebuggerClient = require('./io-debugger/middleware.js');
+const ioDebuggerInjection = require('../io-debugger/injection.js');
+const ioDebuggerServer = require('../io-debugger/server.js');
+const ioDebuggerClient = require('../io-debugger/middleware.js');
+const lrServerSetup = require('./ls-server');
 // Useful tools
-const logutil = require('./lib/log.js');
-const helper = require('./lib/helper.js');
+const logutil = require('./log.js');
+const helper = require('./helper.js');
 // Version for display
-const { version } = require('../package.json');
-const defaultOptions = require('./lib/options.js');
+const {version} = require('../package.json');
+const defaultOptions = require('./options.js');
+// key and cert
+const devKeyPem = join(__dirname, '..', '..', 'ssl', 'dev-key.pem');
+const devCrtPem = join(__dirname, '..', '..', 'ssl', 'dev-cert.pem');
+
 /**
   * Main
   * @param {object} options
@@ -63,8 +67,7 @@ module.exports = function (options) {
   // Create the webserver
   const app = connect();
   // Make this global accessible
-  let urlToOpen = '';
-  let lrServer = null;
+  let urlToOpen = '', lrServer = null;
 
   if (config.livereload.enable) {
     // Here already inject the live reload stuff so we need to figure out a different way to rewrite it
@@ -79,21 +82,7 @@ module.exports = function (options) {
         port: config.livereload.port
       }));
     }
-    if (config.https) {
-      if (config.https.pfx) {
-        lrServer = tinyLr({
-          pfx: fs.readFileSync(config.https.pfx),
-          passphrase: config.https.passphrase
-        });
-      } else {
-        lrServer = tinyLr({
-          key: fs.readFileSync(config.https.key || join(__dirname, '..', 'ssl', 'dev-key.pem')),
-          cert: fs.readFileSync(config.https.cert || join(__dirname, '..', 'ssl', 'dev-cert.pem'))
-        });
-      }
-    } else {
-      lrServer = tinyLr();
-    }
+    lsServer = lrServerSetup(config);
     lrServer.listen(config.livereload.port, config.host);
   }
   // If the ioDebugger is enable then we need to inject our own middleware here to generate the client file
@@ -135,7 +124,6 @@ module.exports = function (options) {
     );
   }
   // @TODO we should just export here and hand it to another file
-
 
   // Store the files for ?
   let files = [];
@@ -191,13 +179,15 @@ module.exports = function (options) {
       };
     } else {
       opts = {
-        key: fs.readFileSync(config.https.key || join(__dirname, '..', 'ssl', 'dev-key.pem')),
-        cert: fs.readFileSync(config.https.cert || join(__dirname, '..', 'ssl', 'dev-cert.pem'))
+        key: fs.readFileSync(config.https.key || devKeyPem),
+        cert: fs.readFileSync(config.https.cert || devCrtPem)
       };
     }
-    webserver = https.createServer(opts, app).listen(config.port, config.host, helper.openInBrowser(config));
+    webserver = https.createServer(opts, app)
+                     .listen(config.port, config.host, helper.openInBrowser(config));
   } else {
-    webserver = http.createServer(app).listen(config.port, config.host, helper.openInBrowser(config));
+    webserver = http.createServer(app)
+                    .listen(config.port, config.host, helper.openInBrowser(config));
   }
   // Init our socket.io server
   let socket = null;
@@ -216,7 +206,10 @@ module.exports = function (options) {
     socket = ioDebuggerServer(config, webserver, logger);
   }
 
-  logutil('Webserver started at', chalk.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
+  logutil(
+    'Webserver started at',
+    chalk.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port)
+  );
 
   stream.on('kill', () => {
     // Console.log('kill issued');

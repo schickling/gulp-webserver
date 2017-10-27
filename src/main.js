@@ -1,5 +1,5 @@
 /* eslint complexity: "off" */
 'use strict';
-const streamServer = require('./stream-server.js');
+const streamServer = require('./lib/stream-server.js');
 // Default export
 module.exports = streamServer;
