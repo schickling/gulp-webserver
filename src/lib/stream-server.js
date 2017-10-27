@@ -32,7 +32,7 @@ const helper = require('./helper.js');
 // Version for display
 const {version} = require('../package.json');
 const defaultOptions = require('./options.js');
-// key and cert
+// Key and cert
 const devKeyPem = join(__dirname, '..', '..', 'ssl', 'dev-key.pem');
 const devCrtPem = join(__dirname, '..', '..', 'ssl', 'dev-cert.pem');
 
@@ -48,6 +48,8 @@ module.exports = function (options) {
     'livereload',
     'ioDebugger'
   ]);
+  config.devKeyPem = devKeyPem;
+  config.devCrtPem = devCrtPem;
   // Inject this so I can see what version is running
   config.version = version;
   // Make sure the namespace is correct first
@@ -67,7 +69,8 @@ module.exports = function (options) {
   // Create the webserver
   const app = connect();
   // Make this global accessible
-  let urlToOpen = '', lrServer = null;
+  let urlToOpen = '',
+    lrServer = null;
 
   if (config.livereload.enable) {
     // Here already inject the live reload stuff so we need to figure out a different way to rewrite it
@@ -179,15 +182,15 @@ module.exports = function (options) {
       };
     } else {
       opts = {
-        key: fs.readFileSync(config.https.key || devKeyPem),
-        cert: fs.readFileSync(config.https.cert || devCrtPem)
+        key: fs.readFileSync(config.https.key || config.devKeyPem),
+        cert: fs.readFileSync(config.https.cert || config.devCrtPem)
       };
     }
     webserver = https.createServer(opts, app)
-                     .listen(config.port, config.host, helper.openInBrowser(config));
+      .listen(config.port, config.host, helper.openInBrowser(config));
   } else {
     webserver = http.createServer(app)
-                    .listen(config.port, config.host, helper.openInBrowser(config));
+      .listen(config.port, config.host, helper.openInBrowser(config));
   }
   // Init our socket.io server
   let socket = null;
