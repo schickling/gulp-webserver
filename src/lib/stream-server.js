@@ -202,7 +202,7 @@ module.exports = function (options) {
         logger = config.ioDebugger.log;
       } else {
         // Our own
-        logger = require('./io-debugger/logger.js');
+        logger = require('../io-debugger/logger.js');
       }
     }
     // Passing the raw io object back

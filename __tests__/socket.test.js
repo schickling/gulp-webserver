@@ -36,8 +36,8 @@ const namespace = '/iodebugger';
 const customNamespace = '/my-custom-namespace';
 const expectedMsg = 'IO DEBUGGER is listening ...';
 const options = {
-    transports: ['websocket'],
-    'force new connection': true
+  transports: ['websocket'],
+  'force new connection': true
 };
 // start test with socket
 describe('gulp-webserver-io ioDebugger test' , () =>
