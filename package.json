@@ -60,7 +60,8 @@
     "prepublishOnly": "nsp check",
     "pretest": "eslint . --fix",
     "test": "jest",
-    "pt": "DEBUG=1 jest socket.js"
+    "pt": "DEBUG=1 jest socket.js",
+    "testmain": "yarn test --testMatch '**/__tests__/main/*.test.js'"
   },
   "eslintConfig": {
     "extends": "xo-space",

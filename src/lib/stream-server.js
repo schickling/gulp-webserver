@@ -30,12 +30,11 @@ const lrServerSetup = require('./lr-server.js');
 const logutil = require('./log.js');
 const helper = require('./helper.js');
 // Version for display
-const {version} = require('../package.json');
+const {version} = require('../../package.json');
 const defaultOptions = require('./options.js');
 // Key and cert
 const devKeyPem = join(__dirname, '..', '..', 'ssl', 'dev-key.pem');
 const devCrtPem = join(__dirname, '..', '..', 'ssl', 'dev-cert.pem');
-
 /**
   * Main
   * @param {object} options
