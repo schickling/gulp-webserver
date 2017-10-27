@@ -25,8 +25,8 @@ const directoryIndexMissingDir = new File({
 });
 
 afterEach(() => {
-    stream.emit('kill');
-    stream = undefined;
+  stream.emit('kill');
+  stream = undefined;
 });
 
 /*
@@ -169,7 +169,7 @@ describe('gulp-webserver-io stock test', () => {
   test('(9) should show a directory listing when the shorthand settings is enabled' , () =>
   {
       stream = webserver({
-          ioDebugger: false,
+        ioDebugger: false,
         directoryListing: true
       });
 
@@ -186,10 +186,10 @@ describe('gulp-webserver-io stock test', () => {
   {
       const test10port = 35729;
       stream = webserver({
-          ioDebugger: false,
+        ioDebugger: false,
         livereload: {
-            enable:true,
-            port: test10port
+          enable:true,
+          port: test10port
         }
       });
 
