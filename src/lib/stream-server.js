@@ -8,7 +8,7 @@ const http = require('http');
 const https = require('https');
 const connect = require('connect');
 const serveStatic = require('serve-static');
-const connectLivereload = require('connect-livereload');
+// Const connectLivereload = require('connect-livereload');
 const httpProxy = require('http-proxy-middleware'); // @2017-07-12 changed
 const watch = require('watch');
 const fs = require('fs');
@@ -76,11 +76,15 @@ module.exports = function (options) {
           port: config.livereload.port
         })
       );
-    } else {
+    }
+    /*
+    @2017-10-27 Why there are two live reload servers?
+    else {
       app.use(connectLivereload({
         port: config.livereload.port
       }));
     }
+    */
     lrServer = lrServerSetup(config);
     lrServer.listen(config.livereload.port, config.host);
   }
