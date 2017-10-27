@@ -25,7 +25,7 @@ const enableMiddlewareShorthand = require('../enableMiddlewareShorthand/index.js
 const ioDebuggerInjection = require('../io-debugger/injection.js');
 const ioDebuggerServer = require('../io-debugger/server.js');
 const ioDebuggerClient = require('../io-debugger/middleware.js');
-const lrServerSetup = require('./ls-server');
+const lrServerSetup = require('./lr-server.js');
 // Useful tools
 const logutil = require('./log.js');
 const helper = require('./helper.js');
