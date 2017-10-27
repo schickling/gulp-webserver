@@ -4,6 +4,7 @@
  */
 const util = require('util');
 const chalk = require('chalk');
+const socketIO = require('socket.io');
 const logutil = require('../lib/log.js');
 /**
  * Just getting some color configuration
@@ -43,7 +44,7 @@ module.exports = function (config, server, logger) {
         ['websocket'];
     }
   }
-  const io = require('socket.io')(server, socketConfig);
+  const io = socketIO(server, socketConfig);
   const keys = ['browser', 'location'];
   // Force the socket.io server to use websocket protocol only
   /*
