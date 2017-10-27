@@ -11,12 +11,11 @@ module.exports = function (config) {
         pfx: fs.readFileSync(config.https.pfx),
         passphrase: config.https.passphrase
       });
-    } else {
-      return tinyLr({
-        key: fs.readFileSync(config.https.key || config.devKeyPem),
-        cert: fs.readFileSync(config.https.cert || config.devCrtPem)
-      });
     }
+    return tinyLr({
+      key: fs.readFileSync(config.https.key || config.devKeyPem),
+      cert: fs.readFileSync(config.https.cert || config.devCrtPem)
+    });
   }
   return tinyLr();
 };

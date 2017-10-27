@@ -69,8 +69,8 @@ module.exports = function (options) {
   // Create the webserver
   const app = connect();
   // Make this global accessible
-  let urlToOpen = '',
-    lrServer = null;
+  let urlToOpen = '';
+  let lrServer = null;
 
   if (config.livereload.enable) {
     // Here already inject the live reload stuff so we need to figure out a different way to rewrite it
@@ -85,7 +85,7 @@ module.exports = function (options) {
         port: config.livereload.port
       }));
     }
-    lsServer = lrServerSetup(config);
+    lrServer = lrServerSetup(config);
     lrServer.listen(config.livereload.port, config.host);
   }
   // If the ioDebugger is enable then we need to inject our own middleware here to generate the client file
