@@ -13,14 +13,14 @@ const {baseUrl,defaultUrl} = require('./fixtures/config.js');
 // Some configuration to enable https testing
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 // Setups
-let stream;
-let proxyStream;
 const rootDir = new File({
     path: join(__dirname, 'fixtures')
 });
 const directoryProxiedDir = new File({
     path: join(__dirname, 'fixtures', 'directoryProxied')
 });
+let stream;
+let proxyStream;
 const testPort = 8765;
 // create the proxy setup
 beforeEach( () =>
@@ -47,7 +47,7 @@ afterEach(() =>
 describe('gulp-webserver-io proxy test' , () =>
 {
   // (0)
-  test(`(0) test the ${testPort} proxy version works first!` , () =>
+  test.skip(`(0) test the ${testPort} proxy version works first!` , () =>
   {
     return request(
       ['http://' , baseUrl , ':' , testPort].join('')
@@ -65,11 +65,12 @@ describe('gulp-webserver-io proxy test' , () =>
     const proxyUrl = ['http://' , baseUrl , ':' , testPort].join('');
     // create basic server
     stream = webserver({
-        ioDebugger: false,
-        proxies: [{
-            source: sourceUrl,
-            target: proxyUrl
-        }]
+      port: 3030,
+      ioDebugger: false,
+      proxies: [{
+          source: sourceUrl,
+          target: proxyUrl
+      }]
     });
     stream.write(rootDir);
     // try the proxy server
