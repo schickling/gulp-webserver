@@ -49,33 +49,4 @@ describe('gulp-webserver-io stock test', () => {
         200, /Hello World/
     );
   });
-  // (3)
-  test('(3) should work with custom host', () =>
-  {
-      const test3host = '0.0.0.0';
-      stream = webserver({
-          host: test3host,
-          ioDebugger: false
-      });
-      stream.write(rootDir);
-
-      return request(
-          ['http://' , test3host , ':' , defaultPort].join('')
-      ).get('/').expect(200, /Hello World/);
-  });
-  // (4)
-  test('(4) should work with custom path' , () =>
-  {
-      const test4path = '/custom/path';
-      stream = webserver({
-        path: test4path,
-        ioDebugger: false
-      });
-
-      stream.write(rootDir);
-
-      return request( [defaultUrl , test4path].join('') )
-        .get('/')
-        .expect(200, /Hello World/);
-  });
 });
