@@ -2,6 +2,9 @@
 
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
+*This is the final maintaince release, no further development with this repo.
+We are currently working on a brand new repo. Please check [gulp-server-io](https://github.com/NewbranLTD/gulp-server-io) for more info*
+
 This is based on the [gulp-webserver](https://github.com/schickling/gulp-webserver)
 
 > Streaming gulp plugin to run a local webserver with LiveReload
