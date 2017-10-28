@@ -42,7 +42,7 @@ const options = {
 // start test with socket
 describe('gulp-webserver-io ioDebugger test' , () =>
 {
-    test(`(1) should auto start ioDebugger and able to connect default namespace ${namespace}` , (done) =>
+    test.skip(`(1) should auto start ioDebugger and able to connect default namespace ${namespace}` , (done) =>
     {
         stream = webserver();
         stream.write(rootDir);
