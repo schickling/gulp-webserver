@@ -1,15 +1,147 @@
-gulp-webserver [![Build Status](http://img.shields.io/travis/schickling/gulp-webserver.svg?style=flat)](https://travis-ci.org/schickling/gulp-webserver) [![](http://img.shields.io/npm/dm/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver) [![](http://img.shields.io/npm/v/gulp-webserver.svg?style=flat)](https://www.npmjs.org/package/gulp-webserver)
-==============
+# gulp-webserver-io V.2
+
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+
+*This is the final maintaince release, no further development with this repo.
+We are currently working on a brand new repo. Please check [gulp-server-io](https://github.com/NewbranLTD/gulp-server-io) for more info*
+
+This is based on the [gulp-webserver](https://github.com/schickling/gulp-webserver)
+
+> Streaming gulp plugin to run a local webserver with LiveReload
+> plus enable `console.log` message to show in the command line (console , terminal whatever) with socket.io,
+> this will help you debug your web app with mobile devices.
+
+The addition is a socket.io based debugger inspired by [this article](https://www.sitepoint.com/proper-error-handling-javascript/) from [sitepoint](https://www.sitepoint.com)
+
+All the original `gulp-webserver` configuration is the same. To configure the new socket.io debugger:
+
+    var gulp = require('gulp');
+    var webserver = require('gulp-webserver-io');
+
+    gulp.task('webserver' , function()
+    {
+        return gulp.src('app')
+                   .pipe(webserver({
+                       livereload: false,
+                       directoryListing: false,
+                       open: true,
+                       ioDebugger: true // enable the ioDebugger  
+                   });
+
+    });
+
+*NOTE this ioDebugger set to true by default since V1.0.4, because we assume you want to use this feature otherwise you wouldn't be using it, right?*    
+
+Once you run your gulp task. Your browser will find two extra files injected 1. The `socket.io.js` 2. `io-debugger-client.js`
+
+Also on the initial run, you will received a message from the `console.log`
+
+    debugger init connection:  IO DEBUGGER is listening ...
+
+Now whenever you have javascript error in your page, not only your console from your browser will see the error. Your command line console
+which run the gulp will also see the message as well.
+
+## BREAKING CHANGE
+
+We have remove the `node-proxy-middleware-spy-io` with `http-proxy-middleware`. This will have some side effects on your current projects. Take a look at this example
+
+```js
+// V1.3 and V2.0 configuration is exactly the same  
+    webserver({
+        proxies: [{
+            source: '/api',
+            target: 'http://anotherhost'
+        }]
+    });
+```
+
+Now in V1.3 and previous. When you call `/api` end point. The `http://anotherhost` will serve up the data you are looking for. But with `http-proxy-middleware`. You need to go one level down
+
+```
+
+    [V1.3] http://localhost:8000/api --> http://anotherhost      
+
+    [V2.0] http://localhost:8000/api --> http://anotherhost/api
+
+```
+
+For live example, you can look into the `__tests__/proxy.js` to see how the test was conducted.
+
+### Configuration
+
+```js
+    ioDebugger: {
+        enable: true,
+        namespace: '/iodebugger', // the namespace for the socket.io REQUIRED
+        js: 'io-debugger-client.js', // the client file that will get inject to your page, if you pass FALSE then you need to inject it manually
+        client: {}, // see below
+		server: {}, // see below
+		log: false // See below
+    }
+```
+
+### client
+
+If you pass the `client:false` then you also need to include the `/socket.io/socket.io.js` as well. Because they are injected at the same time.
+
+The reason why you want to do this may be because you want to fine-tune the console message. It will accept the following data type
+
+    default: String
+    or
+    Object {
+        from: String // if you don't pass color this will only use to check what color should use, debug --> red , info --> blue , warning --> yellow
+        color: String // <-- color method from [colors](https://www.npmjs.com/package/colors)
+        msg: String // <-- the error message,
+		browser: String // the navigator.userAgent
+		location: String // the window.location.href
+    }
+
+Also you might want to integrate into your log method from your application.
+
+Note: Check this [wiki to see how to integrate with your angular (1.x) app](https://github.com/joelchu/gulp-webserver-io/wiki/Creating-an-Angular-(1.X)-%24log-that-log-message-to-the-server.).
+
+You could fine tune how the client run as well
+
+```js
+	ioDebugger: {
+		enable: true 	
+		client: {
+			host: 'anotherHostName',
+			port: 'anotherPortNumber'
+		},
+		server: false // see below
+	}
+
+```
+
+There might be situation where you just want to run your client code but point to a different server. Note that when you set it up like this, you MUST
+include the `/socket.io/socket.io.js` file from somewhere else.
+
+See [server configuration option](https://github.com/joelchu/gulp-webserver-io/wiki/Server-configuration-option) for more information.
+
+####server
+
+If you pass `server:false` then the server listener will not run. This has to work together with the client option above
+
+---
+
+## Install
+
+```sh
+$ npm install --save-dev gulp-webserver-io
+```
+
+[JOEL CHU](https://joelchu.com) 2017
+
+---
+
+============== ORIGINAL README =================
 
 > Streaming gulp plugin to run a local webserver with LiveReload
 
 ##### Hint: This is a rewrite of [gulp-connect](https://github.com/AveVlad/gulp-connect/)
 
-## Install
 
-```sh
-$ npm install --save-dev gulp-webserver
-```
 
 ## Usage
 
@@ -97,3 +229,10 @@ stream.emit('kill');
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
+
+[npm-image]: https://badge.fury.io/js/gulp-webserver-io.svg
+[npm-url]: https://npmjs.org/package/gulp-webserver-io
+[travis-image]: https://travis-ci.org/joelchu/gulp-webserver-io.svg?branch=master
+[travis-url]: https://travis-ci.org/joelchu/gulp-webserver-io
+[daviddm-image]: https://david-dm.org/joelchu/gulp-webserver-io.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/joelchu/gulp-webserver-io

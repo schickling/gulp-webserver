@@ -1,43 +1,73 @@
 {
-  "name": "gulp-webserver",
-  "version": "0.9.1",
-  "description": "Gulp plugin to run a local webserver with LiveReload",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "mocha"
-  },
+  "name": "gulp-webserver-io",
+  "version": "2.2.0",
+  "description": "Gulp plugin to run a local webserver with socket.io debugger",
+  "main": "src/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/schickling/gulp-webserver.git"
+    "url": "https://github.com/joelchu/gulp-webserver-io.git"
   },
   "keywords": [
     "gulpplugin",
     "webserver",
     "connect",
-    "livereload"
+    "livereload",
+    "socket.io",
+    "debugger"
   ],
-  "author": "Johannes Schickling <schickling.j@gmail.com> (https://github.com/schickling)",
+  "author": "Joel Chu <joelckchu@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/schickling/gulp-webserver/issues"
+    "url": "https://github.com/joelchu/gulp-webserver-io/issues"
   },
-  "homepage": "https://github.com/schickling/gulp-webserver",
+  "homepage": "https://github.com/joelchu/gulp-webserver-io",
   "devDependencies": {
-    "mocha": "^1.20.1",
-    "supertest": "^0.13.0"
+    "eslint": "^4.2.0",
+    "eslint-config-xo-space": "^0.17.0",
+    "jest": "^21.2.1",
+    "jest-cli": "^21.2.1",
+    "nsp": "^2.6.3",
+    "socket.io-client": "^2.0.3",
+    "supertest": "^3.0.0"
   },
+  "files": [
+    "src",
+    "ssl",
+    "bin"
+  ],
   "dependencies": {
-    "connect": "^3.0.1",
-    "connect-livereload": "^0.4.0",
-    "gulp-util": "^2.2.19",
-    "isarray": "0.0.1",
-    "node.extend": "^1.0.10",
-    "open": "^0.0.5",
-    "proxy-middleware": "^0.5.0",
-    "serve-index": "^1.1.4",
-    "serve-static": "^1.3.0",
-    "through2": "^0.5.1",
-    "tiny-lr": "0.1.4",
-    "watch": "^0.11.0"
+    "chalk": "^2.0.1",
+    "connect": "^3.6.2",
+    "connect-livereload": "^0.6.0",
+    "gulp-util": "^3.0.8",
+    "http-proxy-middleware": "^0.17.4",
+    "open": "0.0.5",
+    "serve-index": "^1.9.0",
+    "serve-static": "^1.12.3",
+    "socket.io": "^2.0.3",
+    "through2": "^2.0.3",
+    "tiny-lr": "^1.0.5",
+    "watch": "^1.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/fixtures/",
+      "/bin/"
+    ]
+  },
+  "scripts": {
+    "prepublishOnly": "nsp check",
+    "pretest": "eslint . --fix",
+    "test": "jest",
+    "pt": "DEBUG=1 jest socket.js",
+    "testmain": "yarn test --testMatch '**/__tests__/main/*.test.js'"
+  },
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "jest": true,
+      "node": true
+    }
   }
 }

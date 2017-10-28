@@ -1,0 +1,20 @@
+{
+  "name": "gulp-webserver-io-example",
+  "version": "1.0.0",
+  "description": "Example to show how to setup with gulp",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "gulp",
+    "webserver",
+    "node",
+    "socket.io"
+  ],
+  "author": "NEWBRAN.CH",
+  "license": "MIT",
+  "dependencies": {
+    "gulp-4.0.build": "^4.0.0-build.a271520"
+  }
+}
