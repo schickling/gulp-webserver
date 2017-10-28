@@ -76,15 +76,11 @@ module.exports = function (options) {
           port: config.livereload.port
         })
       );
-    }
-    /*
-    @2017-10-27 Why there are two live reload servers?
-    else {
+    } else {
       app.use(connectLivereload({
         port: config.livereload.port
       }));
     }
-    */
     lrServer = lrServerSetup(config);
     lrServer.listen(config.livereload.port, config.host);
   }
