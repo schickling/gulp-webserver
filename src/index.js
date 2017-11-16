@@ -223,6 +223,10 @@ module.exports = function(options) {
 
     if (config.livereload.enable) {
       lrServer.close();
+
+      files.forEach(function (file) {
+        watch.unwatchTree(file.path);
+      });
     }
 
   });
