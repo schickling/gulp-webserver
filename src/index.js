@@ -104,9 +104,7 @@ module.exports = function(options) {
 
   if (config.livereload.enable) {
 
-    app.use(connectLivereload({
-      port: config.livereload.port
-    }));
+    app.use(connectLivereload(config.livereload));
 
     if (config.https) {
       if (config.https.pfx) {
