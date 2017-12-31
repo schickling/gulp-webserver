@@ -1,6 +1,6 @@
 var request = require('supertest');
 var webserver = require('../src');
-var File = require('gulp-util').File;
+var Vinyl = require('vinyl');
 
 // Some configuration to enable https testing
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -10,15 +10,15 @@ describe('gulp-webserver', function() {
   var stream;
   var proxyStream;
 
-  var rootDir = new File({
+  var rootDir = new Vinyl({
     path: __dirname + '/fixtures'
   });
 
-  var directoryIndexMissingDir = new File({
+  var directoryIndexMissingDir = new Vinyl({
     path: __dirname + '/fixtures/directoryIndexMissing'
   });
 
-  var directoryProxiedDir = new File({
+  var directoryProxiedDir = new Vinyl({
     path: __dirname + '/fixtures/directoryProxied'
   });
 

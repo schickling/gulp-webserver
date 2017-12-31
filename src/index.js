@@ -1,5 +1,6 @@
 var through = require('through2');
-var gutil = require('gulp-util');
+var fancyLog = require('fancy-log');
+var colors = require('ansi-colors');
 var http = require('http');
 var https = require('https');
 var connect = require('connect');
@@ -215,7 +216,7 @@ module.exports = function(options) {
     webserver = http.createServer(app).listen(config.port, config.host, openInBrowser);
   }
 
-  gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
+  fancyLog('Webserver started at', colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
 
   stream.on('kill', function() {
 
